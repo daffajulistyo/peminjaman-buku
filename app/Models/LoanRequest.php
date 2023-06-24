@@ -13,6 +13,9 @@ class LoanRequest extends Model
         'user_id',
         'book_id',
         'approved',
+        'tanggal_peminjaman',
+        'tanggal_pengembalian',
+        'status',
     ];
 
     public function user()

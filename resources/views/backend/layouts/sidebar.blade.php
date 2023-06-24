@@ -44,37 +44,36 @@
                 @if (Auth::user()->role == 1)
                     <li class="nav-item">
                         <a href="{{ route('book.index') }}" class="nav-link">
-                            <i class="nav-icon fas fa-th"></i>
+                            <i class="nav-icon fas fa-book"></i>
                             <p>
-                                List Book
+                                Daftar Buku
                                 <!-- <span class="right badge badge-danger">New</span> -->
                             </p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{ route('book.show') }}" class="nav-link">
-                            <i class="nav-icon fas fa-th"></i>
-                            <p>
-                                Add Book
-                                <!-- <span class="right badge badge-danger">New</span> -->
-                            </p>
-                        </a>
-                    </li>
-
                     <li class="nav-item">
                         <a href="{{ route('user.index') }}" class="nav-link">
-                            <i class="nav-icon fas fa-th"></i>
+                            <i class="nav-icon fas fa-users"></i>
                             <p>
-                                List User
+                                Daftar Anggota
                                 <!-- <span class="right badge badge-danger">New</span> -->
                             </p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('loan.index') }}" class="nav-link">
-                            <i class="nav-icon fas fa-th"></i>
+                            <i class="nav-icon fas fa-list"></i>
                             <p>
-                                Loan
+                                Pengajuan Buku
+                                <!-- <span class="right badge badge-danger">New</span> -->
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('list.loans.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-list"></i>
+                            <p>
+                                Peminjaman Buku
                                 <!-- <span class="right badge badge-danger">New</span> -->
                             </p>
                         </a>
@@ -84,10 +83,19 @@
 
                 @if (Auth::user()->role == 2)
                     <li class="nav-item">
-                        <a href="{{ URL::to('/list_book') }}" class="nav-link">
-                            <i class="nav-icon fas fa-th"></i>
+                        <a href="{{ route('request.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-book"></i>
                             <p>
-                                List Book
+                                Peminjaman
+                                <!-- <span class="right badge badge-danger">New</span> -->
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('member.book.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-list"></i>
+                            <p>
+                                List Peminjaman Buku
                                 <!-- <span class="right badge badge-danger">New</span> -->
                             </p>
                         </a>
@@ -96,10 +104,10 @@
 
 
                 <li class="nav-item">
-                    <a class="dropdown-item" href="{{ route('logout') }}"
+                    <a class="nav-link" href="{{ route('logout') }}"
                         onclick="event.preventDefault();
 document.getElementById('logout-form').submit();">
-                        <i class="nav-icon fas fa-th"></i> Logout
+                        <i class="nav-icon fas fa-door-open"></i> Logout
                     </a>
 
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

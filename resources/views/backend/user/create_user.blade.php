@@ -2,24 +2,16 @@
 @section('content')
     <div class="card-body">
         <div class="row">
-
             <div class="col-md-2">
-
             </div>
             <div class="col-md-8">
-                <!-- general form elements -->
                 <div class="card card-info">
                     <div class="card-header">
                         <h3 class="card-title">Add User</h3>
                     </div>
-                    <!-- /.card-header -->
-                    <!-- form start -->
-                    <form role="form" action="{{ route('user.insert') }}" method="post"
-                        enctype="multipart/form-data">
+                    <form role="form" action="{{ route('user.insert') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
-
-
                             <div class="form-group">
                                 <label for="text">Name</label>
                                 <input type="text" name="name"
@@ -57,12 +49,7 @@
                                     </span>
                                 @enderror
                             </div>
-
-
-
                         </div>
-                        <!-- /.card-body -->
-
                         <div class="card-footer">
                             <button type="submit" class="btn btn-info">Submit</button>
                         </div>
@@ -70,13 +57,8 @@
                 </div>
                 <!-- /.card -->
             </div>
-
-
             <div class="col-md-2">
-
             </div>
-
-
         </div>
         <!-- /.row -->
     </div>

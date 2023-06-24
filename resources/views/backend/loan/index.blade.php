@@ -12,8 +12,12 @@
                             <tr>
                                 <th>Anggota</th>
                                 <th>Judul Buku</th>
+                                <th>Tanggal Peminjaman</th>
+                                <th>Tanggal Pengembalian</th>
                                 <th>Status</th>
-                                <th>Aksi</th>
+                                @if (Auth::user()->role == 1)
+                                    <th>Aksi</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -21,23 +25,35 @@
                                 <tr>
                                     <td>{{ $loan->user->name }}</td>
                                     <td>{{ $loan->book->judul_buku }}</td>
-                                    <td>{{ $loan->approved ? 'Disetujui' : 'Menunggu' }}</td>
+                                    <td>{{ $loan->tanggal_peminjaman }}</td>
+                                    <td>{{ $loan->tanggal_pengembalian }}</td>
                                     <td>
-                                        @if (!$loan->approved)
-                                            <form action="{{ route('loan-requests.approve', $loan->id) }}"
-                                                method="POST" class="d-inline">
+                                        @if ($loan->approved)
+                                            Diterima
+                                        @elseif (!$loan->approved)
+                                            Ditolak
+                                        @else
+                                            Menunggu
+                                        @endif
+                                    </td>
+                                    @if (Auth::user()->role == 1)
+                                        <td>
+                                            @if (!$loan->approved)
+                                                <form action="{{ route('loan-requests.approve', $loan->id) }}" method="POST"
+                                                    class="d-inline">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                                </form>
+                                            @endif
+                                            <form action="{{ route('loan-requests.reject', $loan->id) }}" method="POST"
+                                                class="d-inline">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                                <button type="submit" class="btn btn-sm btn-danger">Reject</button>
                                             </form>
-                                        @endif
-                                        <form action="{{ route('loan-requests.reject', $loan->id) }}" method="POST"
-                                            class="d-inline">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" class="btn btn-sm btn-danger">Reject</button>
-                                        </form>
-                                    </td>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
