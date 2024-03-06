@@ -4,13 +4,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Book Master</title>
+    <title>SIPON - Sistim Informasi Presensi Online</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="{{ asset('backend/plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- Tambahkan link ke SweetAlert2 di bagian head HTML -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ asset('backend/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
@@ -23,9 +25,100 @@
     <!-- End Toaster and Sweet Alert-->
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('backend/dist/css/adminlte.min.css') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo_pasaman.png') }}" />
+    <script src="https://cdn.jsdelivr.net/npm/geolib@3.3.3/lib/index.min.js"></script>
+
+    <style>
+        .rangkasurat {
+            width: 100%;
+            margin: 0 auto;
+            /* background-color: #fff; */
+            padding: 20px;
+        }
+
+        .overlay-image {
+            position: absolute;
+            top: 1.1cm;
+            /* left: 20; */
+            width: 70px
+        }
+
+        .absen-button {
+            padding: 8px;
+            background-color: #118ab2;
+            text-align: center;
+            width: 100%;
+            height: 100px;
+            color: white;
+            border-radius: 8px;
+            border: none;
+            margin: 4px;
+            box-shadow: none;
+            transition: background-color 0.3s ease;
+            font-size: 18px;
+            font-family: 'Jetbrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .absen-button-pulang {
+            padding: 8px;
+            background-color: #06d6a0;
+            text-align: center;
+            width: 100%;
+            height: 100px;
+            color: white;
+            border-radius: 8px;
+            border: none;
+            margin: 4px;
+            box-shadow: none;
+            transition: background-color 0.3s ease;
+            font-size: 18px;
+            font-family: 'Jetbrains Mono', monospace;
+            font-weight: 600;
+
+        }
+
+        table.report-absen {
+            border-bottom: 5px solid # 000;
+            padding: 2px
+        }
+
+        .tengah {
+            text-align: center;
+            line-height: 5px;
+        }
+
+        .kiri {
+            text-align: left
+        }
+
+        .kanan {
+            text-align: right
+        }
+
+        th.b3 {
+            background-color: pink;
+            text-align: center;
+
+        }
+
+        .rata-tengah {
+            text-align: center;
+            padding: 4px
+        }
+
+        .name-nowrap {
+            padding: 3px;
+            white-space: nowrap;
+        }
+    </style>
 </head>
 
 <body class="hold-transition sidebar-mini">
+    @php
+        $activeRoute = request()->route()->getName();
+    @endphp
+
     <div class="wrapper">
 
         <!-- Navbar -->
@@ -37,138 +130,22 @@
                             class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="index3.html" class="nav-link">Home</a>
+                    <a href="{{ route('home') }}" class="nav-link">Home</a>
                 </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" class="nav-link">Contact</a>
-                </li>
+
             </ul>
 
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
-                <!-- Navbar Search -->
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                        <i class="fas fa-search"></i>
-                    </a>
-                    <div class="navbar-search-block">
-                        <form class="form-inline">
-                            <div class="input-group input-group-sm">
-                                <input class="form-control form-control-navbar" type="search" placeholder="Search"
-                                    aria-label="Search">
-                                <div class="input-group-append">
-                                    <button class="btn btn-navbar" type="submit">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                    <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </li>
 
-                <!-- Messages Dropdown Menu -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="far fa-comments"></i>
-                        <span class="badge badge-danger navbar-badge">3</span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
-                            <div class="media">
-                                <img src="{{ 'backend/dist/img/user1-128x128.jpg' }}" alt="{{ Auth::user()->name }}"
-                                    class="img-size-50 mr-3 img-circle">
-                                <div class="media-body">
-                                    <h3 class="dropdown-item-title">
-                                        Brad Diesel
-                                        <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                                    </h3>
-                                    <p class="text-sm">Call me whenever you can...</p>
-                                    <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-                                </div>
-                            </div>
-                            <!-- Message End -->
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
-                            <div class="media">
-                                <img src="{{ 'backend/dist/img/user8-128x128.jpg' }}" alt="User Avatar"
-                                    class="img-size-50 img-circle mr-3">
-                                <div class="media-body">
-                                    <h3 class="dropdown-item-title">
-                                        John Pierce
-                                        <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
-                                    </h3>
-                                    <p class="text-sm">I got your message bro</p>
-                                    <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-                                </div>
-                            </div>
-                            <!-- Message End -->
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
-                            <div class="media">
-                                <img src="{{ 'backend/dist/img/user3-128x128.jpg' }}" alt="User Avatar"
-                                    class="img-size-50 img-circle mr-3">
-                                <div class="media-body">
-                                    <h3 class="dropdown-item-title">
-                                        Nora Silvester
-                                        <span class="float-right text-sm text-warning"><i
-                                                class="fas fa-star"></i></span>
-                                    </h3>
-                                    <p class="text-sm">The subject goes here</p>
-                                    <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-                                </div>
-                            </div>
-                            <!-- Message End -->
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
-                    </div>
-                </li>
-                <!-- Notifications Dropdown Menu -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="far fa-bell"></i>
-                        <span class="badge badge-warning navbar-badge">15</span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        <span class="dropdown-header">15 Notifications</span>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-envelope mr-2"></i> 4 new messages
-                            <span class="float-right text-muted text-sm">3 mins</span>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-users mr-2"></i> 8 friend requests
-                            <span class="float-right text-muted text-sm">12 hours</span>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-file mr-2"></i> 3 new reports
-                            <span class="float-right text-muted text-sm">2 days</span>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-                    </div>
-                </li>
+
+
                 <li class="nav-item">
                     <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                         <i class="fas fa-expand-arrows-alt"></i>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"
-                        role="button">
-                        <i class="fas fa-th-large"></i>
-                    </a>
-                </li>
+
             </ul>
         </nav>
         <!-- /.navbar -->
@@ -239,6 +216,10 @@
         <script src="{{ asset('backend/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
         <script src="{{ asset('backend/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
         <script src="{{ asset('backend/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
+
         <script>
             $(function() {
                 $("#example1").DataTable({
@@ -248,28 +229,48 @@
                 $('#example2').DataTable({
                     "paging": true,
                     "lengthChange": false,
-                    "searching": false,
+                    "searching": true,
                     "ordering": true,
                     "info": true,
                     "autoWidth": false,
                     "responsive": true,
                 });
+                $('#userTable').DataTable({
+                    "responsive": true,
+                    "autoWidth": false,
+                    "paging": false,
+                    "info": false,
+
+
+                });
+                $('#absensiTable').DataTable({
+                    "responsive": true,
+                    "autoWidth": false,
+                    "paging": false,
+
+                });
+                $("#exampleTable").DataTable({
+                    "responsive": true,
+                    "autoWidth": false,
+                    "paging": false,
+                    "info": false,
+                    "searching": false,
+
+                });
+
             });
         </script>
 
 
         <!-- End Datatables -->
 
-
-
-
         <script>
             $(document).on("click", "#delete", function(e) {
                 e.preventDefault();
                 var link = $(this).attr("href");
                 swal({
-                        title: "Are you Want to delete?",
-                        text: "Once Delete, This will be Permanently Delete!",
+                        title: "Apakah Anda ingin menghapus?",
+                        text: "Setelah dihapus, ini akan terhapus secara permanen!",
                         icon: "warning",
                         buttons: true,
                         dangerMode: true,
@@ -277,8 +278,6 @@
                     .then((willDelete) => {
                         if (willDelete) {
                             window.location.href = link;
-                        } else {
-                            swal("Safe Data!");
                         }
                     });
             });
@@ -286,9 +285,12 @@
 
         <!-- <script src="{{ asset('backend/js/toastr.min.js') }}"></script> -->
         <script src="{{ asset('backend/js/sweetalert.min.js') }}"></script>
+        <script src="{{ asset('backend/js/yourjavascript.js') }}"></script>
+        {{-- <script src="{{ asset('backend/js/absenLocation.js') }}"></script> --}}
+
 
         <!-- End  Sweet Alert and Toaster notifications -->
-
+        <!-- Pastikan Anda sudah menyertakan jQuery di halaman Anda -->
 
 </body>
 

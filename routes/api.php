@@ -2,6 +2,15 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Backend\API\AuthApiController;
+use App\Http\Controllers\Backend\API\CutiApiController;
+use App\Http\Controllers\Backend\API\IzinApiController;
+use App\Http\Controllers\Backend\API\ChartApiController;
+use App\Http\Controllers\Backend\API\DinasApiController;
+use App\Http\Controllers\Backend\API\SakitApiController;
+use App\Http\Controllers\Backend\API\ReportApiController;
+use App\Http\Controllers\Backend\API\AbsensiApiController;
+use App\Http\Controllers\Backend\Api\LaporanApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,14 +27,38 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-use App\Http\Controllers\API\BookController;
+Route::prefix('v1')->group(function () {
+    Route::middleware('auth:api')->get('/absensi', [AbsensiApiController::class, 'index']);
+    Route::middleware('auth:api')->get('/absensi/name', [AbsensiApiController::class, 'findName']);
 
-Route::group(['prefix' => 'v1'], function () {
-    Route::get('books', [BookController::class, 'index']);
-    Route::get('books/{code}', [BookController::class, 'show']);
-    Route::post('books', [BookController::class, 'store']);
-    Route::put('books/{code}', [BookController::class, 'update']);
-    Route::delete('books/{code}', [BookController::class, 'destroy']);
-
+    // Mendapatkan semau data absen sesuai dengan namanya
+    Route::middleware('auth:api')->get('/absensi/report', [AbsensiApiController::class, 'report']);
+    Route::middleware('auth:api')->post('/absensi', [AbsensiApiController::class, 'store']);
+    Route::middleware('auth:api')->post('/absensi/keluar', [AbsensiApiController::class, 'storeKeluar']);
 
 });
+
+Route::post('/login', [AuthApiController::class, 'login']);
+Route::middleware('auth:api')->post('logout', [AuthApiController::class, 'logout']);
+
+Route::middleware('auth:api')->post('izin', [IzinApiController::class, 'simpanIzin']);
+Route::middleware('auth:api')->post('sakit', [SakitApiController::class, 'simpanSakit']);
+Route::middleware('auth:api')->post('dinas', [DinasApiController::class, 'simpanDinas']);
+Route::middleware('auth:api')->post('cuti', [CutiApiController::class, 'simpanCuti']);
+Route::middleware('auth:api')->get('/user/details', [AuthApiController::class, 'getUserDetails']);
+Route::middleware('auth:api')->get('/user/multi', [AuthApiController::class, 'getUserMultiDetails']);
+
+Route::middleware('auth:api')->get('/cuti/user', [CutiApiController::class, 'index']);
+Route::middleware('auth:api')->get('/dinas/user', [DinasApiController::class, 'index']);
+Route::middleware('auth:api')->get('/sakit/user', [SakitApiController::class, 'index']);
+Route::middleware('auth:api')->get('/izin/user', [IzinApiController::class, 'index']);
+
+Route::middleware('auth:api')->delete('/cuti/delete', [CutiApiController::class, 'delete']);
+Route::middleware('auth:api')->delete('/dinas/delete', [DinasApiController::class, 'delete']);
+Route::middleware('auth:api')->delete('/izin/delete', [IzinApiController::class, 'delete']);
+Route::middleware('auth:api')->delete('/sakit/delete', [SakitApiController::class, 'delete']);
+
+// Route::get('/users/opd', [LaporanApiController::class, 'getUsersCountByOpd']);
+Route::get('/users/opd', [ReportApiController::class, 'getUsersCountByOpd']);
+Route::get('/rekap/laporan', [ReportApiController::class, 'rekapLaporan']);
+Route::get('/kehadiran', [ChartApiController::class, 'getTotalKehadiranPerOpd']);

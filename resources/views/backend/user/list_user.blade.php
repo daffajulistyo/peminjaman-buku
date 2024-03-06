@@ -16,11 +16,12 @@
                                 <th>Name</th>
                                 <th>email</th>
                                 <th>Role</th>
+                                {{-- <th>Nip</th> --}}
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php $no=1; ?>
+                            <?php $no = 1; ?>
                             @foreach ($users as $user)
                                 <tr>
                                     <td>{{ $no }}</td>
@@ -39,18 +40,20 @@
                                         @endphp
 
                                     </td>
+                                    {{-- <td> {{ $user->nip }} </td> --}}
                                     <td>
-                                        <a href="{{ URL::to('user/edit_user/' . $user->id) }}" class="btn btn-sm btn-info">Edit</a>
-                                        <a href="{{ URL::to('user/delete_user/' . $user->id) }}" class="btn btn-sm btn-danger"
-                                            id="delete" class="middle-align">Delete</a>
+                                        <a href="{{ route('user.edit', ['id' => $user->id]) }}"
+                                            class="btn btn-sm btn-info">Edit</a>
+                                        <a href="{{ route('user.delete', ['id' => $user->id]) }}"
+                                            class="btn btn-sm btn-danger" id="delete" class="middle-align">Delete</a>
 
                                     </td>
                                 </tr>
-                                <?php $no++ ;?>
+                                <?php $no++; ?>
                             @endforeach
 
                         </tbody>
-              
+
                     </table>
                 </div>
                 <!-- /.card-body -->
