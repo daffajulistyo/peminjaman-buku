@@ -1,4 +1,4 @@
-<div class="modal fade" id="addJabatanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="addJabatanModal" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -34,7 +34,7 @@
                             @else
                                 <label for="opd">Pilih OPD</label>
 
-                                <select name="opd_id" class="form-control @error('opd') is-invalid @enderror" required>
+                                <select name="opd_id" class="form-control select2 @error('opd') is-invalid @enderror" style="width: 100%;" required>
                                     <option value="" selected disabled>Pilih OPD</option>
                                     @php
                                         $opds = App\Models\Opd::all();

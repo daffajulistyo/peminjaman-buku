@@ -8,28 +8,55 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <a href="{{ route('user.show') }}" class="btn btn-mm btn-info mb-4 " data-toggle="modal"
+                    <a href="#" class="btn btn-mm btn-info mb-4 " data-toggle="modal"
                         data-target="#addPegawaiModal">+ Tambah Pegawai</a>
-
-                    <form action="{{ route('user.index') }}" method="GET" class="mb-2">
-                        <div class="row justify-content-end">
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="nama" name="nama"
-                                        value="{{ request()->query('nama') }}" placeholder="Cari Pegawai">
+                    @if (Auth::user()->role == 3)
+                        <form action="{{ route('user.index') }}" method="GET" class="mb-2">
+                            <div class="row justify-content-end">
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="nama" name="nama"
+                                            value="{{ request()->query('nama') }}" placeholder="Cari Pegawai">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="nip" name="nip"
-                                        value="{{ request()->query('nip') }}" placeholder="Cari NIP/NIK">
-                                    <div class="input-group-append">
-                                        <button type="submit" class="btn btn-info">Cari</button>
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="opd" name="opd"
+                                            value="{{ request()->query('opd') }}" placeholder="Cari Opd">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="nip" name="nip"
+                                            value="{{ request()->query('nip') }}" placeholder="Cari NIP/NIK">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-info">Cari</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    @else
+                        <form action="{{ route('user.index') }}" method="GET" class="mb-2">
+                            <div class="row justify-content-end">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="nama" name="nama"
+                                            value="{{ request()->query('nama') }}" placeholder="Cari Pegawai">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="nip" name="nip"
+                                            value="{{ request()->query('nip') }}" placeholder="Cari NIP/NIK">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-info">Cari</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    @endif
                     <table id="exampleTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
@@ -71,6 +98,7 @@
                                                     name="is_active" value="0">Offline</button>
                                             @endif
                                         </form>
+                                        
                                     </td>
 
 
@@ -122,7 +150,7 @@
                         </tbody>
 
                     </table>
-                    
+
                     <div class="pagination justify-content-center mt-2">
                         {{ $users->links() }}
                     </div>

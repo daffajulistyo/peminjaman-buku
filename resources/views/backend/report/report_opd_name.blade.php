@@ -9,7 +9,7 @@
                         <div class="form-group row ml-3">
                             <label for="opd" class="col-sm-2 col-form-label">Pilih OPD</label>
                             <div class="col-sm-10">
-                                <select name="opd" id="opd" class="form-control" disabled>
+                                <select name="opd" id="opd" class="form-control select2" disabled>
                                     <option value="{{ Auth::user()->opd->id }}" selected>{{ Auth::user()->opd->name }}
                                     </option>
                                 </select>
@@ -19,7 +19,7 @@
                         <div class="form-group row ml-3">
                             <label for="opd" class="col-sm-2 col-form-label">Pilih Pegawai</label>
                             <div class="col-sm-10">
-                                <select class="form-control" name="user_id" required>
+                                <select class="form-control select2" name="user_id" required>
                                     <option value="{{ request('user_id') }}" disabled selected>Pilih Pegawai</option>
                                     @php
                                         $users = \App\Models\User::where('opd_id', Auth::user()->opd_id)
@@ -249,9 +249,36 @@
                                                         @if ($jamKeluar !== '-')
                                                             <td class="rata-tengah">
                                                                 @if ($durasiKerja !== '-')
-                                                                    {{ floor($durasiKerja / 60) - 1 }} jam
-                                                                    {{ $durasiKerja % 60 }}
-                                                                    menit
+                                                                    @php
+                                                                        $adjustedDurasi = $durasiKerja; // Durasi awal
+                                                                        $tanggal = \Carbon\Carbon::parse($date);
+                                                                        // Periksa apakah tanggal berada dalam rentang tanggal yang perlu disesuaikan
+                                                                        if (
+                                                                            $tanggal->between(
+                                                                                \Carbon\Carbon::parse('2024-03-12'),
+                                                                                \Carbon\Carbon::parse('2024-04-11'),
+                                                                            )
+                                                                        ) {
+                                                                            // Jika dalam rentang tanggal yang ditentukan
+                                                                            if (
+                                                                                $tanggal->isMonday() ||
+                                                                                $tanggal->isTuesday() ||
+                                                                                $tanggal->isWednesday() ||
+                                                                                $tanggal->isThursday()
+                                                                            ) {
+                                                                                // Kurangi 30 menit dari durasi kerja jika hari Senin - Kamis
+                                                                                $adjustedDurasi -= 30;
+                                                                            } elseif ($tanggal->isFriday()) {
+                                                                                // Kurangi 1 jam dari durasi kerja pada hari Jumat
+                                                                                $adjustedDurasi -= 60;
+                                                                            }
+                                                                        } else {
+                                                                            // Jika di luar rentang tanggal, kurangi 1 jam dari durasi kerja
+                                                                            $adjustedDurasi -= 60;
+                                                                        }
+                                                                    @endphp
+                                                                    {{ floor($adjustedDurasi / 60) }} jam
+                                                                    {{ $adjustedDurasi % 60 }} menit
                                                                 @else
                                                                     -
                                                                 @endif

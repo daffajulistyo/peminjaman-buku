@@ -12,7 +12,6 @@ class LiburNasionalController extends Controller
     {
         $liburNasionals = LiburNasional::query();
 
-        // Filter berdasarkan bulan jika bulan dipilih
         if ($request->has('bulan')) {
             $liburNasionals->whereMonth('tanggal', date('m', strtotime($request->bulan)));
         }

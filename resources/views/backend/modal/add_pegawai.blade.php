@@ -1,5 +1,4 @@
-<div class="modal fade" id="addPegawaiModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="addPegawaiModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:hidden;">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -19,7 +18,7 @@
                                     <label for="text">Name</label>
                                     <input type="text" name="name"
                                         class="form-control @error('name') is-invalid @enderror" id="text"
-                                        placeholder="Enter Your Name" required>
+                                        placeholder="Masukkan Nama" required>
                                     @error('name')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -31,7 +30,7 @@
                                     <label for="text">Nip</label>
                                     <input type="number" name="nip"
                                         class="form-control @error('nip') is-invalid @enderror" id="text"
-                                        placeholder="Enter Your Nip">
+                                        placeholder="Masukan NIP / NIK">
                                     @error('nip')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -44,7 +43,8 @@
                                 <div class="form-group">
                                     <label for="eselon_id">Eselon</label>
                                     <select name="eselon_id"
-                                        class="form-control @error('eselon_id') is-invalid @enderror" id="eselon_id">
+                                        class="form-control select2 @error('eselon_id') is-invalid @enderror"
+                                        style="width: 100%" id="eselon_id">
                                         <option value="">Pilih Eselon</option>
                                         @foreach ($eselon as $e)
                                             <option value="{{ $e->id }}">{{ $e->name }}</option>
@@ -67,7 +67,7 @@
                                         </span>
                                     @enderror
                                 </div>
-                               
+
                             </div>
                             <!-- Right Column -->
                             <div class="col-md-6">
@@ -81,30 +81,16 @@
                                 @if (Auth::user()->role == 1)
                                     <div class="form-group">
                                         <label for="opd_id">OPD</label>
-                                        <select name="opd_id"
-                                            class="form-control @error('opd_id') is-invalid @enderror" id="opd_id"
-                                            readonly>
-                                            <option value="">Pilih OPD</option>
-                                            @foreach ($opds as $opd)
-                                                <option value="{{ $opd->id }}"
-                                                    {{ Auth::user()->opd_id == $opd->id ? 'selected' : '' }}>
-                                                    {{ $opd->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('opd_id')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
+                                        <input type="text" class="form-control" value="{{ Auth::user()->opd->name }}"
+                                            disabled>
+                                        <input type="hidden" name="opd_id" value="{{ Auth::user()->opd_id }}">
                                     </div>
-
 
                                     <div class="form-group">
                                         <label for="jabatan_id">Jabatan</label>
                                         <select name="jabatan_id"
-                                            class="form-control @error('jabatan_id') is-invalid @enderror"
-                                            id="jabatan_id">
+                                            class="form-control select2 @error('jabatan_id') is-invalid @enderror"
+                                            style="width: 100%;" id="jabatan_id">
                                             <option value="">Pilih Jabatan</option>
                                             @foreach ($jabatans as $jabatan)
                                                 @if (Auth::user()->opd_id == $jabatan->opd_id)
@@ -122,7 +108,8 @@
                                     <div class="form-group">
                                         <label for="opd_id">OPD</label>
                                         <select name="opd_id"
-                                            class="form-control @error('opd_id') is-invalid @enderror" id="opd_id">
+                                            class="form-control select2 @error('opd_id') is-invalid @enderror"
+                                            id="opd_id" style="width: 100%">
                                             <option value="">Pilih OPD</option>
                                             @foreach ($opds as $opd)
                                                 <option value="{{ $opd->id }}">{{ $opd->name }}</option>
@@ -134,29 +121,12 @@
                                             </span>
                                         @enderror
                                     </div>
-                                    <div class="form-group">
-                                        <label for="bidang_id">Bidang</label>
-                                        <select name="bidang_id"
-                                            class="form-control @error('bidang_id') is-invalid @enderror"
-                                            id="bidang_id">
-                                            <option value="">Pilih Bidang</option>
-                                            @foreach ($bidangs as $bidang)
-                                                <option value="{{ $bidang->id }}">{{ $bidang->name }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('bidang_id')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-
 
                                     <div class="form-group">
                                         <label for="jabatan_id">Jabatan</label>
                                         <select name="jabatan_id"
-                                            class="form-control @error('jabatan_id') is-invalid @enderror"
-                                            id="jabatan_id">
+                                            class="form-control select2 @error('jabatan_id') is-invalid @enderror"
+                                            id="jabatan_id" style="width: 100%">
                                             <option value="">Pilih Jabatan</option>
                                             @foreach ($jabatans as $jabatan)
                                                 <option value="{{ $jabatan->id }}">{{ $jabatan->name }}</option>
@@ -173,8 +143,8 @@
                                 <div class="form-group">
                                     <label for="pangkat_id">Pangkat</label>
                                     <select name="pangkat_id"
-                                        class="form-control @error('pangkat_id') is-invalid @enderror"
-                                        id="pangkat_id">
+                                        class="form-control select2 @error('pangkat_id') is-invalid @enderror"
+                                        style="width: 100%" id="pangkat_id">
                                         <option value="">Pilih Pangkat</option>
                                         @foreach ($pangkats as $pangkat)
                                             <option value="{{ $pangkat->id }}">{{ $pangkat->name }}</option>
@@ -215,3 +185,10 @@
         </div>
     </div>
 </div>
+
+<script>
+    var select_jabatan = documen.querySelector('#jabatan_id');
+    dselect(select_jabatan, {
+        search: true,
+    })
+</script>

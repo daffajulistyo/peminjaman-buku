@@ -39,12 +39,14 @@ Route::prefix('v1')->group(function () {
 });
 
 Route::post('/login', [AuthApiController::class, 'login']);
+Route::post('/eselon/login', [AuthApiController::class, 'loginEselonDua']);
 Route::middleware('auth:api')->post('logout', [AuthApiController::class, 'logout']);
 
 Route::middleware('auth:api')->post('izin', [IzinApiController::class, 'simpanIzin']);
 Route::middleware('auth:api')->post('sakit', [SakitApiController::class, 'simpanSakit']);
 Route::middleware('auth:api')->post('dinas', [DinasApiController::class, 'simpanDinas']);
 Route::middleware('auth:api')->post('cuti', [CutiApiController::class, 'simpanCuti']);
+// Lokasi
 Route::middleware('auth:api')->get('/user/details', [AuthApiController::class, 'getUserDetails']);
 Route::middleware('auth:api')->get('/user/multi', [AuthApiController::class, 'getUserMultiDetails']);
 
@@ -58,6 +60,7 @@ Route::middleware('auth:api')->delete('/dinas/delete', [DinasApiController::clas
 Route::middleware('auth:api')->delete('/izin/delete', [IzinApiController::class, 'delete']);
 Route::middleware('auth:api')->delete('/sakit/delete', [SakitApiController::class, 'delete']);
 
+Route::get('/koordinat-tambahan', [AbsensiApiController::class, 'koordinatTambahan']);
 // Route::get('/users/opd', [LaporanApiController::class, 'getUsersCountByOpd']);
 Route::get('/users/opd', [ReportApiController::class, 'getUsersCountByOpd']);
 Route::get('/rekap/laporan', [ReportApiController::class, 'rekapLaporan']);

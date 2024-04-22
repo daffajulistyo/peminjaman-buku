@@ -28,6 +28,8 @@
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo_pasaman.png') }}" />
     <script src="https://cdn.jsdelivr.net/npm/geolib@3.3.3/lib/index.min.js"></script>
 
+    <link rel="stylesheet" href="{{ asset('backend/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/dist/css/adminlte.min.css') }}">
     <style>
         .rangkasurat {
             width: 100%;
@@ -205,6 +207,8 @@
         <!-- REQUIRED SCRIPTS -->
         <!-- jQuery -->
         <script src="{{ asset('backend/plugins/jquery/jquery.min.js') }}"></script>
+   
+        <script src="{{ asset('backend/plugins/select2/js/select2.full.min.js') }}"></script>
         <!-- Bootstrap 4 -->
         <script src="{{ asset('backend/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <!-- AdminLTE App -->
@@ -286,11 +290,12 @@
         <!-- <script src="{{ asset('backend/js/toastr.min.js') }}"></script> -->
         <script src="{{ asset('backend/js/sweetalert.min.js') }}"></script>
         <script src="{{ asset('backend/js/yourjavascript.js') }}"></script>
-        {{-- <script src="{{ asset('backend/js/absenLocation.js') }}"></script> --}}
-
-
-        <!-- End  Sweet Alert and Toaster notifications -->
-        <!-- Pastikan Anda sudah menyertakan jQuery di halaman Anda -->
+        <script>
+            $(document).ready(function() {
+                // Inisialisasi Select2
+                $('.select2').select2();
+            });
+        </script>
 
 </body>
 

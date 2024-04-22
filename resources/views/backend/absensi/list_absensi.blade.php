@@ -55,31 +55,60 @@
                                     <td>{{ $absensi->jam_masuk }}</td>
                                     <td>{{ $absensi->jam_keluar ?? 'Belum Absen Pulang' }}</td>
                                     <td>
-                                        @if (strtotime($absensi->jam_masuk) > strtotime('07:30:00'))
-                                            <span class="badge badge-danger" style="font-size: 12px;"><i
-                                                    class="far fa-clock"></i> TELAT</span>
+                                        @if (strtotime($absensi->tanggal) >= strtotime('2024-03-12') && strtotime($absensi->tanggal) <= strtotime('2024-04-09'))
+                                            {{-- Jika dalam rentang tanggal yang ditentukan --}}
+                                            @if (strtotime($absensi->jam_masuk) > strtotime('08:00:00'))
+                                                <span class="badge badge-danger" style="font-size: 12px;"><i
+                                                        class="far fa-clock"></i> TELAT</span>
+                                            @else
+                                                <span class="badge badge-success" style="font-size: 12px;"><i
+                                                        class="far fa-clock"></i> MASUK</span>
+                                            @endif
                                         @else
-                                            <span class="badge badge-success" style="font-size: 12px;"><i
-                                                    class="far fa-clock"></i> MASUK</span>
+                                            {{-- Jika di luar rentang tanggal yang ditentukan --}}
+                                            @if (strtotime($absensi->jam_masuk) > strtotime('07:30:00'))
+                                                <span class="badge badge-danger" style="font-size: 12px;"><i
+                                                        class="far fa-clock"></i> TELAT</span>
+                                            @else
+                                                <span class="badge badge-success" style="font-size: 12px;"><i
+                                                        class="far fa-clock"></i> MASUK</span>
+                                            @endif
                                         @endif
+
 
                                         @php
                                             $tanggal = $absensi->tanggal; // Ambil tanggal dari database (format: 'YYYY-MM-DD')
-
                                             $hari = \Carbon\Carbon::createFromFormat('Y-m-d', $tanggal)->format('l');
                                         @endphp
+
                                         @if ($absensi->jam_keluar == null)
                                             <span class="" style="font-size: 12px;"></span>
-                                        @elseif ($hari == 'Friday' && strtotime($absensi->jam_keluar) < strtotime('16:30:00'))
-                                            || <span class="badge badge-danger" style="font-size: 12px;"><i
-                                                    class="far fa-clock"></i> PULANG CEPAT</span>
-                                        @elseif ($hari != 'Friday' && strtotime($absensi->jam_keluar) < strtotime('16:00:00'))
-                                            || <span class="badge badge-danger" style="font-size: 12px;"><i
-                                                    class="far fa-clock"></i> PULANG CEPAT</span>
+                                        @elseif (strtotime($tanggal) >= strtotime('2024-03-12') && strtotime($tanggal) <= strtotime('2024-04-09'))
+                                            {{-- Jika dalam rentang tanggal yang ditentukan --}}
+                                            @if ($hari == 'Friday' && strtotime($absensi->jam_keluar) < strtotime('15:30:00'))
+                                                || <span class="badge badge-danger" style="font-size: 12px;"><i
+                                                        class="far fa-clock"></i> PULANG CEPAT</span>
+                                            @elseif ($hari != 'Friday' && strtotime($absensi->jam_keluar) < strtotime('15:00:00'))
+                                                || <span class="badge badge-danger" style="font-size: 12px;"><i
+                                                        class="far fa-clock"></i> PULANG CEPAT</span>
+                                            @else
+                                                || <span class="badge badge-success" style="font-size: 12px;"><i
+                                                        class="far fa-clock"></i> PULANG TEPAT WAKTU</span>
+                                            @endif
                                         @else
-                                            || <span class="badge badge-success" style="font-size: 12px;"><i
-                                                    class="far fa-clock"></i> PULANG TEPAT WAKTU</span>
+                                            {{-- Jika di luar rentang tanggal yang ditentukan --}}
+                                            @if ($hari == 'Friday' && strtotime($absensi->jam_keluar) < strtotime('16:30:00'))
+                                                || <span class="badge badge-danger" style="font-size: 12px;"><i
+                                                        class="far fa-clock"></i> PULANG CEPAT</span>
+                                            @elseif ($hari != 'Friday' && strtotime($absensi->jam_keluar) < strtotime('16:00:00'))
+                                                || <span class="badge badge-danger" style="font-size: 12px;"><i
+                                                        class="far fa-clock"></i> PULANG CEPAT</span>
+                                            @else
+                                                || <span class="badge badge-success" style="font-size: 12px;"><i
+                                                        class="far fa-clock"></i> PULANG TEPAT WAKTU</span>
+                                            @endif
                                         @endif
+
 
                                     </td>
 

@@ -1,4 +1,5 @@
-<div class="modal fade" id="absenModal" tabindex="-1" role="dialog"
+
+<div class="modal fade" id="absenModal" role="dialog"
                             aria-labelledby="dinasModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
@@ -18,7 +19,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="user_id">Nama Pegawai</label>
-                                                <select class="form-control" name="user_id" required>
+                                                <select class="form-control select2" name="user_id" style="width: 100%;" required>
                                                     <option value="" disabled selected>Pilih Pegawai</option>
                                                     @php
                                                         $users = \App\Models\User::where('opd_id', Auth::user()->opd_id)

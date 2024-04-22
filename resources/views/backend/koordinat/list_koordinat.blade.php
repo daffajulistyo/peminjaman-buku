@@ -8,10 +8,34 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <a href="" class="btn btn-mm btn-info mb-4" data-toggle="modal" data-target="#addKoordinatModal">+
-                        Tambah Koordinat Kantor</a>
+                    <div class="d-flex justify-content-between">
+                        <a href="" class="btn btn-mm btn-info mr-2" data-toggle="modal"
+                            data-target="#addKoordinatModal">+ Tambah Koordinat Kantor</a>
+                        @php
+                            $coordinate = App\Models\AktifKoordinat::latest()->first();
+                            $isActive = $coordinate->active;
+                        @endphp
+
+                        <form action="{{ route('toggle.koordinat') }}" method="POST">
+                            @csrf <!-- Tambahkan token CSRF untuk keamanan -->
+                            <div class="input-group">
+                                <input type="text" class="form-control" readonly value="Presensi Kantor Bupati"
+                                    aria-describedby="basic-addon1">
+                                <div class="input-group-append">
+                                    <button type="submit"
+                                        class="btn @if ($isActive) btn-success @else btn-danger @endif">
+                                        <i class="fa fa-power-off" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+
+
+                    </div>
+
                     <form action="{{ route('koordinat.index') }}" method="GET" class="mb-2">
-                        <div class="row justify-content-end">
+                        <div class="row justify-content-end mt-4">
                             <div class="col-md-4">
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="nama" name="nama"
@@ -160,7 +184,7 @@
 
     </div>
 
-    <div class="modal fade" id="addKoordinatModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="addKoordinatModal" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -180,8 +204,8 @@
                         @endphp
                         <div class="form-group">
                             <label for="opd_id">OPD</label>
-                            <select name="opd_id" class="form-control @error('opd_id') is-invalid @enderror"
-                                id="opd_id">
+                            <select name="opd_id" class="form-control select2 @error('opd_id') is-invalid @enderror"
+                                style="width: 100%;" id="opd_id">
                                 <option value="">Pilih OPD</option>
                                 <!-- Opsi kosong jika tidak ada opsi yang dipilih -->
                                 @foreach ($opds as $opd)

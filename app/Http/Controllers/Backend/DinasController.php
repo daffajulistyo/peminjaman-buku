@@ -16,34 +16,28 @@ class DinasController extends Controller
 {
     public function simpanDinas(Request $request)
     {
-        // Validasi input
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'tanggal' => 'required|date',
             'keterangan' => 'required',
-
         ]);
 
-        $existingDinas = Dinas::where('tanggal_mulai', '<=', $request->input('tanggal_mulai'))
-            ->where('tanggal_selesai', '>=', $request->input('tanggal_selesai'))
+        $existingDinas = Dinas::where('tanggal', $request->input('tanggal'))
             ->where('user_id', $request->input('user_id'))
             ->first();
 
         if ($existingDinas) {
             $existingDinas->update([
-                'tanggal_mulai' => $request->input('tanggal_mulai'),
-                'tanggal_selesai' => $request->input('tanggal_selesai'),
                 'keterangan' => $request->input('keterangan'),
             ]);
 
-            Absensi::whereBetween('tanggal', [$request->input('tanggal_mulai'), $request->input('tanggal_selesai')])
+            Absensi::where('tanggal', $request->input('tanggal'))
                 ->where('user_id', $request->input('user_id'))
                 ->delete();
-            Izin::whereBetween('tanggal', [$request->input('tanggal_mulai'), $request->input('tanggal_selesai')])
+            Izin::where('tanggal', $request->input('tanggal'))
                 ->where('user_id', $request->input('user_id'))
                 ->delete();
-            Sakit::whereBetween('tanggal', [$request->input('tanggal_mulai'), $request->input('tanggal_selesai')])
+            Sakit::where('tanggal', $request->input('tanggal'))
                 ->where('user_id', $request->input('user_id'))
                 ->delete();
             Cuti::where('tanggal_mulai', '<=', $request->input('tanggal'))
@@ -51,30 +45,35 @@ class DinasController extends Controller
                 ->where('user_id', $request->input('user_id'))
                 ->delete();
 
-            return redirect()->route('dinas.index')->with('success', 'Data Dinas berhasil disimpan.');
+            return redirect()->route('dinas.index')->with('success', 'Data dinas berhasil disimpan.');
         } else {
             $dinas = new Dinas;
             $dinas->user_id = $request->input('user_id');
-            $dinas->tanggal_mulai = $request->input('tanggal_mulai');
-            $dinas->tanggal_selesai = $request->input('tanggal_selesai');
+            $dinas->tanggal = $request->input('tanggal');
             $dinas->keterangan = $request->input('keterangan');
             $dinas->save();
         }
 
-        Absensi::whereBetween('tanggal', [$request->input('tanggal_mulai'), $request->input('tanggal_selesai')])
-            ->where('user_id', $request->input('user_id'))
+        Absensi::where('user_id', $request->input('user_id'))
+            ->whereDate('tanggal', $request->input('tanggal'))
             ->delete();
-        Izin::whereBetween('tanggal', [$request->input('tanggal_mulai'), $request->input('tanggal_selesai')])
-            ->where('user_id', $request->input('user_id'))
+
+        Izin::where('user_id', $request->input('user_id'))
+            ->whereDate('tanggal', $request->input('tanggal'))
             ->delete();
-        Sakit::whereBetween('tanggal', [$request->input('tanggal_mulai'), $request->input('tanggal_selesai')])
-            ->where('user_id', $request->input('user_id'))
-            ->delete();
-        Dinas::whereBetween('tanggal', [$request->input('tanggal_mulai'), $request->input('tanggal_selesai')])
+
+        Cuti::where('tanggal_mulai', '<=', $request->input('tanggal'))
+            ->where('tanggal_selesai', '>=', $request->input('tanggal'))
             ->where('user_id', $request->input('user_id'))
             ->delete();
 
-        return redirect()->route('dinas.index')->with('success', 'Data Dinas berhasil disimpan.');
+        Sakit::where('user_id', $request->input('user_id'))
+            ->whereDate('tanggal', $request->input('tanggal'))
+            ->delete();
+
+
+
+        return redirect()->route('dinas.index')->with('success', 'Data dinas berhasil disimpan.');
     }
 
 

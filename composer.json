@@ -17,8 +17,7 @@
         "laravel/ui": "^4.2",
         "maatwebsite/excel": "^3.1",
         "mpdf/mpdf": "^8.2",
-        "realrashid/sweet-alert": "^7.1",
-        "yoeunes/toastr": "^2.3"
+        "realrashid/sweet-alert": "^7.1"
     },
     "require-dev": {  
         "fakerphp/faker": "^1.9.1",

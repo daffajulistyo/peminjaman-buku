@@ -100,4 +100,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Sakit::class);
     }
+
+    public function opdChanges()
+    {
+        return $this->hasMany(OpdChange::class);
+    }
 }

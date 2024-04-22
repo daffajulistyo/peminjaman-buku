@@ -27,4 +27,14 @@ class Opd extends Model
     public function jabatans(){
         return $this->hasMany(Jabatan::class, 'opd_id');
     }
+
+    public function oldOpdChanges()
+    {
+        return $this->hasMany(OpdChange::class, 'old_opd_id');
+    }
+
+    public function newOpdChanges()
+    {
+        return $this->hasMany(OpdChange::class, 'new_opd_id');
+    }
 }

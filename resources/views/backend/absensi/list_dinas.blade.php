@@ -26,6 +26,7 @@
                                 </div>
                             </div>
 
+
                             <div class="form-group row">
                                 <label for="tanggal" class="col-sm-3 pr-5 col-form-label">Tanggal
                                 </label>
@@ -67,7 +68,7 @@
                     @if (Auth::user()->role == 1)
                         <a href="#" class="btn btn-mm btn-info mb-4" data-toggle="modal" data-target="#dinasModal">+
                             Tambah Presensi Dinas</a>
-                        <div class="modal fade" id="dinasModal" tabindex="-1" role="dialog"
+                        <div class="modal fade" id="dinasModal" role="dialog"
                             aria-labelledby="dinasModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
@@ -88,7 +89,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="user_id">Nama Pegawai</label>
-                                                <select class="form-control" name="user_id" required>
+                                                <select class="form-control select2" style="width: 100%;" name="user_id" required>
                                                     <option value="" disabled selected>Pilih Pegawai</option>
                                                     @php
                                                         $users = \App\Models\User::where('opd_id', Auth::user()->opd_id)
@@ -104,7 +105,7 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="tanggal">Tanggal</label>
+                                                <label for="tanggal">Tanggal Mulai</label>
                                                 <input class="form-control" type="date" name="tanggal" required>
                                             </div>
                                             <div class="form-group">
@@ -141,7 +142,7 @@
                     <table id="exampleTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>No</th>
                                 <th>Nama</th>
                                 <th>Tanggal</th>
                                 <th>Keterangan</th>
@@ -157,7 +158,34 @@
 
                                     <td>{{ \Carbon\Carbon::parse($d->tanggal)->locale('id_ID')->translatedFormat('j F Y') }}
                                     </td>
+                                  
+                                    {{-- <td>
+                                        @php
+                                            $tanggalMulai = \Carbon\Carbon::parse($d->tanggal_mulai);
+                                            $tanggalSelesai = \Carbon\Carbon::parse($d->tanggal_selesai);
 
+                                            $jumlahHariCuti = 0;
+
+                                            // $daftarHariLiburNasional = ['2023-12-25']; // Gantilah ini dengan daftar hari libur nasional
+                                            $daftarHariLiburNasional = App\Models\LiburNasional::pluck('tanggal')->toArray();
+
+                                            while ($tanggalMulai <= $tanggalSelesai) {
+                                                // Periksa apakah hari saat ini bukan Sabtu (6) atau Minggu (0)
+                                                if ($tanggalMulai->dayOfWeek != 6 && $tanggalMulai->dayOfWeek != 0) {
+                                                    $tanggalString = $tanggalMulai->format('Y-m-d');
+                                                    // Periksa apakah hari saat ini bukan hari libur nasional
+                                                    if (!in_array($tanggalString, $daftarHariLiburNasional)) {
+                                                        $jumlahHariCuti++;
+                                                    }
+                                                }
+
+                                                $tanggalMulai->addDay(); // Tambahkan 1 hari
+                                            }
+                                        @endphp
+
+                                        {{ $jumlahHariCuti }} Hari Kerja
+
+                                    </td> --}}
                                     <td>{{ $d->keterangan }}</td>
                                     <td>{{ $d->alamat ?? '-' }}</td>
 
@@ -212,7 +240,8 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="text">Tanggal </label>
-                                                        <input type="date" name="tanggal" value="{{ $d->tanggal }}"
+                                                        <input type="date" name="tanggal"
+                                                            value="{{ $d->tanggal }}"
                                                             class="form-control @error('tanggal') is-invalid @enderror">
                                                         @error('tanggal')
                                                             <span class="invalid-feedback" role="alert">

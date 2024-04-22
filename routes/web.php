@@ -20,6 +20,7 @@ use App\Http\Controllers\Backend\PegawaiController;
 use App\Http\Controllers\Backend\KoordinatController;
 use App\Http\Controllers\Backend\API\AuthApiController;
 use App\Http\Controllers\Backend\LiburNasionalController;
+use App\Http\Controllers\Backend\RekapitulasiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,9 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::prefix('admin')->middleware('auth')->group(function () {
+
+    Route::get('rekapitulasi', [RekapitulasiController::class, 'index'])->name('rekap.index');
+    Route::get('/opd/{opdId}/rekap', [RekapitulasiController::class, 'show'])->name('rekap.user');
     Route::prefix('master')->group(function () {
         Route::get('/libur', [LiburNasionalController::class, 'index'])->name('libur.index');
         Route::post('/insert_libur', [LiburNasionalController::class, 'store'])->name('libur.insert');
@@ -128,6 +132,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::post('/update_koordinat/{id}', [KoordinatController::class, 'update'])->name('koordinat.update');
         Route::get('/delete_koordinat/{id}', [KoordinatController::class, 'destroy'])->name('koordinat.delete');
         Route::get('pick-location', [KoordinatController::class, 'pickLocation'])->name('koordinat.pick_location');
+        Route::post('/toggle-koordinat', [KoordinatController::class, 'toggleKoordinat'])->name('toggle.koordinat');
+
     });
     Route::prefix('user')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('user.index');
@@ -203,8 +209,8 @@ Route::get('/user-coordinates', [AuthApiController::class, 'getUserCoordinates']
 Route::get('report/name', [ReportController::class, 'cetakLaporanByNama'])->name('report.nama')->middleware(['auth']);
 Route::get('report/opd/name', [ReportController::class, 'cetakLaporanByOpdNama'])->name('report.opd.nama')->middleware(['auth']);
 
-Route::get('report/opd/week', [ReportController::class, 'cetakLaporanMingguan'])->name('report.minggu')->middleware(['auth']);
-Route::get('report/opd/days', [ReportController::class, 'cetakLaporanHarian'])->name('report.hari')->middleware(['auth']);
+Route::get('report/mingguan', [ReportController::class, 'cetakLaporanMingguan'])->name('report.minggu')->middleware(['auth']);
+Route::get('report/harian', [ReportController::class, 'cetakLaporanHarian'])->name('report.hari')->middleware(['auth']);
 
 
 Route::get('/table/chart', [ChartController::class, 'index'])->name('report.table')->middleware(['auth']);
@@ -213,3 +219,13 @@ Route::get('/opd/get-users/{opd}', 'UserController@getUsersByOpd')->name('get.us
 Route::get('/faq', [FaqController::class, 'show'])->name('faqs.show');
 
 // Route::get('report/name', [ReportController::class, 'cetakLaporanUser'])->name('report.user');
+Route::get('/select', function () {
+    return view('select');
+})->name('select.index');
+
+Route::get('/get-jabatans/{opdId}', [OpdController::class, 'getJabatans']);
+Route::get('/get-bidangs/{opdId}', [OpdController::class, 'getBidangs']);
+
+Route::get('admin/user/insert_user', function () {
+    abort(403, 'Forbidden'); // Melemparkan pengecualian 403 Forbidden jika metode HTTP adalah GET
+})->name('insert_user')->middleware('auth');

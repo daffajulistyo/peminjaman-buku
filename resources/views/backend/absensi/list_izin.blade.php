@@ -66,7 +66,7 @@
                     @if (Auth::user()->role == 1)
                         <a href="#" class="btn btn-mm btn-info mb-4" data-toggle="modal" data-target="#izinModal">+
                             Tambah Presensi Izin</a>
-                        <div class="modal fade" id="izinModal" tabindex="-1" role="dialog"
+                        <div class="modal fade" id="izinModal" role="dialog"
                             aria-labelledby="dinasModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
@@ -87,7 +87,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="user_id">Nama Pegawai</label>
-                                                <select class="form-control" name="user_id" required>
+                                                <select class="form-control select2" style="width: 100%;" name="user_id" required>
                                                     <option value="" disabled selected>Pilih Pegawai</option>
                                                     @php
                                                         $users = \App\Models\User::where('opd_id', Auth::user()->opd_id)

@@ -1,7 +1,5 @@
 @extends('backend.layouts.app')
 @section('content')
-
-    {{-- Dynamic OPD Selection --}}
     <div class="row">
         <div class="col-md-12">
             <div class="card card-primary">
@@ -13,7 +11,7 @@
                             <label for="opd" class="col-sm-2 col-form-label">Pilih OPD</label>
                             <div class="col-sm-10">
                                 @if (Auth::user()->role == 3 || Auth::user()->role == 4)
-                                    <select name="opd" id="opd" class="form-control">
+                                    <select name="opd" id="opd" class="form-control select2">
                                         <option value="{{ request('opd') }}" disabled selected>Pilih OPD</option>
 
                                         @php
@@ -229,20 +227,13 @@
                                                         foreach ($dinas as $entry) {
                                                             $tanggalDinas = \Carbon\Carbon::parse($entry->tanggal);
 
-                                                            // Periksa apakah hari dinas bukan Sabtu (6) atau Minggu (0)
+                                                            $tanggalDinasString = $tanggalDinas->format('Y-m-d');
                                                             if (
                                                                 $tanggalDinas->dayOfWeek != 6 &&
-                                                                $tanggalDinas->dayOfWeek != 0
+                                                                $tanggalDinas->dayOfWeek != 0 &&
+                                                                !in_array($tanggalDinasString, $daftarHariLiburNasional)
                                                             ) {
-                                                                // Periksa apakah hari dinas bukan hari libur nasional
-                                                                if (
-                                                                    !in_array(
-                                                                        $tanggalDinas->format('Y-m-d'),
-                                                                        $daftarHariLiburNasional,
-                                                                    )
-                                                                ) {
-                                                                    $jumlahHariDinas++;
-                                                                }
+                                                                $jumlahHariDinas++;
                                                             }
                                                         }
                                                         $jumlahHariCuti = 0;
@@ -397,30 +388,35 @@
                                         <tr>
                                             <td style="text-align: center; padding-right: 15%; ">
                                                 @if ($kepalaDinas)
-                                                    KEPALA DINAS
+                                                    KEPALA DINAS<br>
                                                 @elseif ($kepalaBadan)
-                                                    KEPALA BADAN
+                                                    KEPALA BADAN<br>
                                                 @elseif ($sekda)
-                                                    SEKRETARIS DAERAH
+                                                    SEKRETARIS DAERAH<br>
                                                 @elseif ($inspektur)
-                                                    INSPEKTUR
+                                                    INSPEKTUR<br>
                                                 @elseif ($camat)
-                                                    CAMAT
+                                                    CAMAT<br>
                                                 @elseif ($direktur)
-                                                    DIREKTUR
+                                                    DIREKTUR<br>
                                                 @elseif ($kepalaSatuan)
-                                                    KEPALA SATUAN
+                                                    KEPALA SATUAN<br>
                                                 @elseif ($asisten1)
-                                                    ASISTEN PEMERINTAHAN
+                                                    ASISTEN PEMERINTAHAN<br>
                                                 @elseif ($asisten2)
-                                                    ASISTEN PEREKONOMIAN<br>PEMBANGUNAN DAN KESEJAHTERAAN RAKYAT
+                                                    ASISTEN PEREKONOMIAN DAN PEMBANGUNAN
                                                 @elseif ($asisten3)
-                                                    ASISTEN ADMINISTRASI UMUM
+                                                    ASISTEN ADMINISTRASI UMUM<br>
                                                 @else
                                                     -
                                                 @endif
                                             </td>
-                                            <td style="text-align: center; padding-left: 20%;">KASUBAG UMUM DAN KEPEGAWAIAN
+                                            <td style="text-align: center; padding-left: 20%;">
+                                                @if ($kasubagTu)
+                                                    KASUBBAG TU PIMPINAN, STAF AHLI<br>DAN KEPEGAWAIAN
+                                                @else
+                                                    KASUBAG UMUM DAN KEPEGAWAIAN<br>
+                                                @endif
                                             </td>
                                         </tr>
                                         <tr>
@@ -491,8 +487,23 @@
 
 
                                             <td style="text-align: center; padding-left: 20%;">
-                                                <strong><u>{{ $kasubag->name ?? '-' }}</u></strong><br>
-                                                <strong> NIP.{{ $kasubag->nip ?? '-' }}</strong>
+                                                <strong><u>
+                                                        @if ($kasubag)
+                                                            {{ $kasubag->name ?? '-' }}
+                                                        @elseif ($kasubagTu)
+                                                            {{ $kasubagTu->name ?? '-' }}
+                                                        @else
+                                                            -
+                                                        @endif
+                                                    </u></strong><br>
+                                                <strong> NIP.@if ($kasubag)
+                                                        {{ $kasubag->nip ?? '-' }}
+                                                    @elseif ($kasubagTu)
+                                                        {{ $kasubagTu->nip ?? '-' }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </strong>
                                             </td>
                                         </tr>
 
@@ -522,6 +533,4 @@
             });
         </script>
     @endif
-
-
 @endsection

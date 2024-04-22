@@ -40,7 +40,7 @@ class ReportApiController extends Controller
                 ->count();
 
             $isKepalaDinas = $opd->users()->whereHas('eselon', function ($query) {
-                $query->where('name', 'Eselon II');
+                $query->where('name', 'Eselon II B');
             })->exists();
 
             if ($isKepalaDinas) {
@@ -95,7 +95,7 @@ class ReportApiController extends Controller
                 ->get()
                 ->map(function ($user) {
                     // Periksa apakah properti 'eselon' tersedia dan bukan null sebelum mengakses properti 'name'
-                    if ($user->eselon && $user->eselon->name === 'Eselon II' && $user->absensi->isEmpty()) {
+                    if ($user->eselon && $user->eselon->name === 'Eselon II B' && $user->absensi->isEmpty()) {
                         return [
                             'name' => $user->name,
                             'keterangan' => '-',
@@ -217,7 +217,7 @@ class ReportApiController extends Controller
 
     private function getKeterangan($jamMasuk)
     {
-        $jamMasukThreshold = Carbon::parse('07:30'); // Sesuaikan ambang batas yang dibutuhkan
+        $jamMasukThreshold = Carbon::parse('08:30'); // Sesuaikan ambang batas yang dibutuhkan
 
         return Carbon::parse($jamMasuk)->gt($jamMasukThreshold) ? 'TELAT' : 'HADIR';
     }

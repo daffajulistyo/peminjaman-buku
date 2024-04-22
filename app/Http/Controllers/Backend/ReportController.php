@@ -80,6 +80,10 @@ class ReportController extends Controller
             $query->where('name', 'Kasubag Umum dan Kepegawaian');
         })->first();
 
+        $kasubagTu = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
+            $query->where('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+        })->first();
+
         $kepalaSatuan = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
             $query->where('name', 'Kepala Satuan');
         })->first();
@@ -89,7 +93,7 @@ class ReportController extends Controller
         })->first();
 
         $asisten2 = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'ASISTEN PEREKONOMIAN PEMBANGUNAN DAN KESEJAHTERAAN RAKYAT');
+            $query->where('name', 'ASISTEN PEREKONOMIAN DAN PEMBANGUNAN');
         })->first();
 
         $asisten3 = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
@@ -98,7 +102,8 @@ class ReportController extends Controller
 
         $koordinat = Koordinat::where('opd_id', $selectedOpdId)->first();
 
-        $users = User::where('opd_id', $selectedOpdId)->get();
+        $users = User::where('opd_id', $selectedOpdId)->orderByRaw('eselon_id IS NULL, eselon_id, pangkat_id IS NULL, pangkat_id, status = "PNS" DESC, status')
+            ->get();
 
         $selectedBulan = $request->input('bulan');
 
@@ -109,7 +114,7 @@ class ReportController extends Controller
 
         if ($opdSekretariatDaerah && $opdSekretariatDaerah->id == $selectedOpdId) {
             // Ambil ID OPD dari OPD yang ingin digabungkan
-            $opdToMergeNames = ['ASISTEN PEMERINTAHAN', 'ASISTEN PEREKONOMIAN PEMBANGUNAN DAN KESEJAHTERAAN RAKYAT', 'ASISTEN ADMINISTRASI UMUM']; // Misalnya, nama OPD yang ingin Anda gabungkan
+            $opdToMergeNames = ['ASISTEN PEMERINTAHAN', 'ASISTEN PEREKONOMIAN DAN PEMBANGUNAN', 'ASISTEN ADMINISTRASI UMUM']; // Misalnya, nama OPD yang ingin Anda gabungkan
             $opdsToMerge = Opd::whereIn('name', $opdToMergeNames)->get();
 
             // Ambil daftar pengguna dari setiap OPD yang ingin Anda gabungkan
@@ -127,6 +132,7 @@ class ReportController extends Controller
             'sekda' => $sekda,
             'camat' => $camat,
             'kasubag' => $kasubag,
+            'kasubagTu' => $kasubagTu,
             'kepalaSatuan' => $kepalaSatuan,
             'opds' => $opds,
             'selectedOpd' => $opd,
@@ -478,7 +484,7 @@ class ReportController extends Controller
         $selectedOpdId = $request->input('opd');
         $opd = Opd::find($selectedOpdId);
         $koordinat = Koordinat::where('opd_id', $selectedOpdId)->first();
-        $users = User::where('opd_id', $selectedOpdId)->get();
+        $users = User::where('opd_id', $selectedOpdId)->orderByRaw('eselon_id IS NULL, eselon_id, pangkat_id IS NULL, pangkat_id, status = "PNS" DESC, status')->get();
 
         $selectedWeek = Carbon::parse($request->input('week'));
         $weekStartDate = $selectedWeek->startOfWeek()->format('Y-m-d');
@@ -567,12 +573,12 @@ class ReportController extends Controller
         // Jika opd yang dipilih adalah Sekretariat Daerah
         if ($opd && $opd->name === 'Sekretariat Daerah') {
             // Ambil ID OPD dari OPD yang ingin digabungkan
-            $opdToMergeNames = ['ASISTEN PEMERINTAHAN', 'ASISTEN PEREKONOMIAN PEMBANGUNAN DAN KESEJAHTERAAN RAKYAT', 'ASISTEN ADMINISTRASI UMUM']; // Misalnya, nama OPD yang ingin Anda gabungkan
+            $opdToMergeNames = ['ASISTEN PEMERINTAHAN', 'ASISTEN PEREKONOMIAN DAN PEMBANGUNAN', 'ASISTEN ADMINISTRASI UMUM']; // Misalnya, nama OPD yang ingin Anda gabungkan
             $opdsToMerge = Opd::whereIn('name', $opdToMergeNames)->get();
 
             // Ambil daftar pengguna dari setiap OPD yang ingin Anda gabungkan
             foreach ($opdsToMerge as $opdToMerge) {
-                $usersFromOtherOpd = User::where('opd_id', $opdToMerge->id)->get();
+                $usersFromOtherOpd = User::where('opd_id', $opdToMerge->id)->orderByRaw('eselon_id IS NULL, eselon_id, pangkat_id IS NULL, pangkat_id, status = "PNS" DESC, status')->get();
                 $users = $users->merge($usersFromOtherOpd);
 
                 // Populate attendance, duty, permission, sick, and leave data for users from merged OPDs
@@ -672,6 +678,10 @@ class ReportController extends Controller
             $query->where('name', 'Kasubag Umum dan Kepegawaian');
         })->first();
 
+        $kasubagTu = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
+            $query->where('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+        })->first();
+
         $kepalaSatuan = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
             $query->where('name', 'Kepala Satuan');
         })->first();
@@ -681,7 +691,7 @@ class ReportController extends Controller
         })->first();
 
         $asisten2 = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'ASISTEN PEREKONOMIAN PEMBANGUNAN DAN KESEJAHTERAAN RAKYAT');
+            $query->where('name', 'ASISTEN PEREKONOMIAN DAN PEMBANGUNAN');
         })->first();
 
         $asisten3 = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
@@ -710,6 +720,7 @@ class ReportController extends Controller
             'camat' => $camat,
             'direktur' => $direktur,
             'kasubag' => $kasubag,
+            'kasubagTu' => $kasubagTu,
             'kepalaSatuan' => $kepalaSatuan,
             'asisten1' => $asisten1,
             'asisten2' => $asisten2,
@@ -718,18 +729,31 @@ class ReportController extends Controller
     }
 
 
-
-
     public function cetakLaporanHarian(Request $request)
     {
         $opds = Opd::all();
         $selectedOpdId = $request->input('opd');
         $opd = Opd::find($selectedOpdId);
         $koordinat = Koordinat::where('opd_id', $selectedOpdId)->first();
-        $users = User::where('opd_id', $selectedOpdId)->get();
+        // $users = User::where('opd_id', $selectedOpdId)->orderByRaw('eselon_id IS NULL, eselon_id, pangkat_id IS NULL, pangkat_id, status = "PNS" DESC, status')->get();
 
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
+
+        $users = User::where('opd_id', $selectedOpdId)
+            ->orderByRaw('eselon_id IS NULL, eselon_id, pangkat_id IS NULL, pangkat_id, status = "PNS" DESC, status')
+            ->get();
+
+        // Mendapatkan daftar pengguna yang telah berpindah OPD dalam rentang tanggal yang dipilih
+        $usersChangedOpd = User::whereIn('id', function ($query) use ($selectedOpdId, $startDate, $endDate) {
+            $query->select('user_id')
+                ->from('opd_changes')
+                ->where('new_opd_id', $selectedOpdId)
+                ->whereBetween('tanggal_pindah', [$startDate, $endDate]);
+        })->get();
+
+        // Menggabungkan daftar pengguna yang telah berpindah OPD ke daftar pengguna OPD yang dipilih
+        $users = $users->merge($usersChangedOpd);
 
         $dates = [];
         $currentDate = Carbon::parse($startDate);
@@ -816,12 +840,12 @@ class ReportController extends Controller
         // Jika opd yang dipilih adalah Sekretariat Daerah
         if ($opd && $opd->name === 'Sekretariat Daerah') {
             // Ambil ID OPD dari OPD yang ingin digabungkan
-            $opdToMergeNames = ['ASISTEN PEMERINTAHAN', 'ASISTEN PEREKONOMIAN PEMBANGUNAN DAN KESEJAHTERAAN RAKYAT', 'ASISTEN ADMINISTRASI UMUM']; // Misalnya, nama OPD yang ingin Anda gabungkan
+            $opdToMergeNames = ['ASISTEN PEMERINTAHAN', 'ASISTEN PEREKONOMIAN DAN PEMBANGUNAN', 'ASISTEN ADMINISTRASI UMUM']; // Misalnya, nama OPD yang ingin Anda gabungkan
             $opdsToMerge = Opd::whereIn('name', $opdToMergeNames)->get();
 
             // Ambil daftar pengguna dari setiap OPD yang ingin Anda gabungkan
             foreach ($opdsToMerge as $opdToMerge) {
-                $usersFromOtherOpd = User::where('opd_id', $opdToMerge->id)->get();
+                $usersFromOtherOpd = User::where('opd_id', $opdToMerge->id)->orderByRaw('eselon_id IS NULL, eselon_id, pangkat_id IS NULL, pangkat_id, status = "PNS" DESC, status')->get();
                 $users = $users->merge($usersFromOtherOpd);
 
                 // Populate attendance, duty, permission, sick, and leave data for users from merged OPDs
@@ -914,6 +938,10 @@ class ReportController extends Controller
             $query->where('name', 'Kasubag Umum dan Kepegawaian');
         })->first();
 
+        $kasubagTu = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
+            $query->where('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+        })->first();
+
         $kepalaSatuan = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
             $query->where('name', 'Kepala Satuan');
         })->first();
@@ -923,7 +951,7 @@ class ReportController extends Controller
         })->first();
 
         $asisten2 = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'ASISTEN PEREKONOMIAN PEMBANGUNAN DAN KESEJAHTERAAN RAKYAT');
+            $query->where('name', 'ASISTEN PEREKONOMIAN DAN PEMBANGUNAN');
         })->first();
 
         $asisten3 = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
@@ -949,6 +977,7 @@ class ReportController extends Controller
             'kepalaBadan' => $kepalaBadan,
             'inspektur' => $inspektur,
             'camat' => $camat,
+            'kasubagTu' => $kasubagTu,
             'direktur' => $direktur,
             'kasubag' => $kasubag,
             'kepalaSatuan' => $kepalaSatuan,

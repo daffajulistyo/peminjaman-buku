@@ -9,8 +9,9 @@
                         <div class="form-group row ml-3" hidden>
                             <label for="opd" class="col-sm-2 col-form-label">Pilih OPD</label>
                             <div class="col-sm-10">
-                                <select name="opd" id="opd" class="form-control" disabled>
-                                    <option value="{{ Auth::user()->opd->id }}" selected>{{ Auth::user()->opd->name }}</option>
+                                <select name="opd" id="opd" class="form-control select2" disabled>
+                                    <option value="{{ Auth::user()->opd->id }}" selected>{{ Auth::user()->opd->name }}
+                                    </option>
                                 </select>
                                 <input type="hidden" name="opd" value="{{ Auth::user()->opd->id }}">
                             </div>
@@ -18,13 +19,14 @@
                         <div class="form-group row ml-3" hidden>
                             <label for="opd" class="col-sm-2 col-form-label">Pilih Pegawai</label>
                             <div class="col-sm-10">
-                                <select name="user_id" id="user_id" class="form-control" disabled>
-                                    <option value="{{ request(Auth::user()->id) }}" selected>{{ Auth::user()->name }}</option>
+                                <select name="user_id" id="user_id" class="form-control select2" disabled>
+                                    <option value="{{ request(Auth::user()->id) }}" selected>{{ Auth::user()->name }}
+                                    </option>
                                 </select>
                                 <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
                             </div>
                         </div>
-                        
+
                         <div class="form-group row ml-3">
                             <label for="tanggal_mulai" class="col-sm-2 col-form-label">Tanggal Awal</label>
                             <div class="col-sm-10">
@@ -171,11 +173,35 @@
                                                             $telat = false;
                                                             $durasiKerja = '-';
 
-                                                            if ($jamMasuk !== null && $jamMasuk !== '-' && $jamMasuk !== 'Libur Nasional') {
-                                                                $jamMasuk = \Carbon\Carbon::parse($jamMasuk)->format('H:i');
-                                                                $jamKeluar = $jamKeluar !== '-' ? \Carbon\Carbon::parse($jamKeluar)->format('H:i') : '-';
-                                                                $durasiKerja = $jamKeluar !== '-' ? \Carbon\Carbon::parse($jamKeluar)->diffInMinutes(\Carbon\Carbon::parse($jamMasuk)) : '-';
-                                                                $telat = \Carbon\Carbon::parse($attendance['jam_masuk'])->greaterThan(\Carbon\Carbon::parse($date)->setHour(7)->setMinute(30));
+                                                            if (
+                                                                $jamMasuk !== null &&
+                                                                $jamMasuk !== '-' &&
+                                                                $jamMasuk !== 'Libur Nasional'
+                                                            ) {
+                                                                $jamMasuk = \Carbon\Carbon::parse($jamMasuk)->format(
+                                                                    'H:i',
+                                                                );
+                                                                $jamKeluar =
+                                                                    $jamKeluar !== '-'
+                                                                        ? \Carbon\Carbon::parse($jamKeluar)->format(
+                                                                            'H:i',
+                                                                        )
+                                                                        : '-';
+                                                                $durasiKerja =
+                                                                    $jamKeluar !== '-'
+                                                                        ? \Carbon\Carbon::parse(
+                                                                            $jamKeluar,
+                                                                        )->diffInMinutes(
+                                                                            \Carbon\Carbon::parse($jamMasuk),
+                                                                        )
+                                                                        : '-';
+                                                                $telat = \Carbon\Carbon::parse(
+                                                                    $attendance['jam_masuk'],
+                                                                )->greaterThan(
+                                                                    \Carbon\Carbon::parse($date)
+                                                                        ->setHour(7)
+                                                                        ->setMinute(30),
+                                                                );
                                                             }
                                                         @endphp
                                                         @if ($jamMasuk !== null && $jamMasuk !== '-' && $jamMasuk !== 'Libur Nasional')
@@ -201,9 +227,33 @@
                                                         @if ($jamKeluar !== '-')
                                                             <td class="rata-tengah">
                                                                 @if ($durasiKerja !== '-')
-                                                                    {{ floor($durasiKerja / 60) - 1 }} jam
-                                                                    {{ $durasiKerja % 60 }}
-                                                                    menit
+                                                                    @php
+                                                                        $adjustedDurasi = $durasiKerja; // Durasi awal
+                                                                        $tanggal = \Carbon\Carbon::parse($date);
+                                                                        // Periksa apakah tanggal berada dalam rentang tanggal yang perlu disesuaikan
+                                                                        if (
+                                                                            $tanggal->between(
+                                                                                \Carbon\Carbon::parse('2024-03-12'),
+                                                                                \Carbon\Carbon::parse('2024-04-11'),
+                                                                            )
+                                                                        ) {
+                                                                            // Periksa apakah hari tersebut adalah hari Senin hingga Kamis
+                                                                            if (
+                                                                                $tanggal->isMonday() ||
+                                                                                $tanggal->isTuesday() ||
+                                                                                $tanggal->isWednesday() ||
+                                                                                $tanggal->isThursday()
+                                                                            ) {
+                                                                                // Kurangi 30 menit dari durasi kerja
+                                                                                $adjustedDurasi -= 30;
+                                                                            } elseif ($tanggal->isFriday()) {
+                                                                                // Kurangi 1 jam dari durasi kerja pada hari Jumat
+                                                                                $adjustedDurasi -= 60;
+                                                                            }
+                                                                        }
+                                                                    @endphp
+                                                                    {{ floor($adjustedDurasi / 60) - 1 }} jam
+                                                                    {{ $adjustedDurasi % 60 }} menit
                                                                 @else
                                                                     -
                                                                 @endif

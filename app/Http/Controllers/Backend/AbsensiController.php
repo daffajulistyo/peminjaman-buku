@@ -46,6 +46,8 @@ class AbsensiController extends Controller
 
         $absen = $absenQuery->paginate(10);
 
+        $absen->appends(['search_name' => $searchName]);
+
         return view('backend.absensi.list_absensi', compact('absen'));
     }
 

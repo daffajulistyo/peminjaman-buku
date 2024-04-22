@@ -12,7 +12,7 @@ class Dinas extends Model
     protected $table = 'dinas';
 
     protected $fillable = [
-        'user_id', 'tanggal','latitude','longitude', 'keterangan', 'tanggal_mulai', 'tanggal_selesai'
+        'user_id', 'latitude','longitude', 'keterangan', 'tanggal', 'alamat'
     ];
 
     public function user()

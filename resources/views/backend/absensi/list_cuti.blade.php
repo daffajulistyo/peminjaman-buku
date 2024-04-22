@@ -71,7 +71,7 @@
                     @if (Auth::user()->role == 1)
                         <a href="#" class="btn btn-mm btn-info mb-4" data-toggle="modal" data-target="#cutiModal">+
                             Tambah Presensi Cuti</a>
-                        <div class="modal fade" id="cutiModal" tabindex="-1" role="dialog"
+                        <div class="modal fade" id="cutiModal" role="dialog"
                             aria-labelledby="dinasModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
@@ -92,7 +92,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="user_id">Nama Pegawai</label>
-                                                <select class="form-control" name="user_id" required>
+                                                <select class="form-control select2" style="width: 100%;" name="user_id" required>
                                                     <option value="" disabled selected>Pilih Pegawai</option>
                                                     @php
                                                         $users = \App\Models\User::where('opd_id', Auth::user()->opd_id)
@@ -177,7 +177,9 @@
 
                                             $jumlahHariCuti = 0;
 
-                                            $daftarHariLiburNasional = ['2023-12-25']; // Gantilah ini dengan daftar hari libur nasional
+                                            $daftarHariLiburNasional = App\Models\LiburNasional::pluck(
+                                                'tanggal',
+                                            )->toArray();
 
                                             while ($tanggalMulai <= $tanggalSelesai) {
                                                 // Periksa apakah hari saat ini bukan Sabtu (6) atau Minggu (0)

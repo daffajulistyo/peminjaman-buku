@@ -10,8 +10,8 @@
                         <div class="form-group row ml-3">
                             <label for="opd" class="col-sm-2 col-form-label">Pilih OPD</label>
                             <div class="col-sm-10">
-                                <select name="opd" id="opd" class="form-control" onchange="this.form.submit()">
-                                    <option value="" disabled selected>PILIH OPD</option>
+                                <select name="opd" id="opd" class="form-control select2" onchange="this.form.submit()">
+                                    {{-- <option value="" disabled selected>PILIH OPD</option> --}}
                                     @php
                                         $opds = App\Models\Opd::all();
                                     @endphp
@@ -27,7 +27,7 @@
                             <div class="form-group row ml-3">
                                 <label for="user_id" class="col-sm-2 col-form-label">Pilih Pegawai</label>
                                 <div class="col-sm-10">
-                                    <select class="form-control" name="user_id" id="userSelect" required>
+                                    <select class="form-control select2" name="user_id" id="userSelect" required>
                                         <option value="" disabled selected>Pilih Pegawai</option>
                                         @php
                                             $users = App\Models\User::where('opd_id', request('opd'))->where('role', 2)->get();
@@ -93,7 +93,7 @@
                                             <td class="tengah">
                                                 <h4><strong>PEMERINTAH KABUPATEN PASAMAN</strong></h4>
                                                 @if (strcasecmp($opd->name, 'ASISTEN PEMERINTAHAN') == 0 ||
-                                                strcasecmp($opd->name, 'ASISTEN PEREKONOMIAN PEMBANGUNAN DAN KESEJAHTERAAN RAKYAT') == 0 ||
+                                                strcasecmp($opd->name, 'ASISTEN PEREKONOMIAN DAN PEMBANGUNAN') == 0 ||
                                                 strcasecmp($opd->name, 'ASISTEN ADMINISTRASI UMUM') == 0)
                                             <h3
                                                 style="font-weight: bold; padding-left:50px; padding-right:50px; text-transform: uppercase">

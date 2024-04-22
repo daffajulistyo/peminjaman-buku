@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Absensi;
+use App\Models\AktifKoordinat;
 use App\Models\Izin;
 use App\Models\Dinas;
 use App\Models\Cuti;
@@ -31,10 +32,11 @@ class AbsensiApiController extends Controller
     {
         $userId = $request->input('user_id');
 
+        // Mencari data berdasarkan ID pengguna dan membatasi hasilnya menjadi 10 berdasarkan tanggal
         $absensi = Absensi::where('user_id', $userId)
             ->orderBy('tanggal', 'desc') // Menampilkan data terbaru dulu
             ->limit(2)
-            ->get(); 
+            ->get();
 
         return response()->json(['data' => $absensi]);
     }
@@ -43,6 +45,7 @@ class AbsensiApiController extends Controller
     {
         $userId = $request->input('user_id');
 
+        // Mencari data berdasarkan ID pengguna dan membatasi hasilnya menjadi 10 berdasarkan tanggal
         $absensi = Absensi::where('user_id', $userId)
             ->orderBy('tanggal', 'desc') // Menampilkan data terbaru dulu
             ->get();
@@ -102,6 +105,8 @@ class AbsensiApiController extends Controller
             return response()->json(['message' => 'Anda sudah melakukan absen masuk hari ini']);
         }
 
+
+        // Jika belum ada izin atau absen masuk untuk pengguna pada tanggal yang sama, simpan absen masuk
         $jamMasuk = Carbon::now('Asia/Jakarta');
         $absensi = new Absensi([
             'user_id' => $user,
@@ -118,16 +123,19 @@ class AbsensiApiController extends Controller
         $user = $request->input('user_id');
         $jamKeluar = Carbon::now('Asia/Jakarta')->toTimeString();
 
+        // Cari absen masuk yang sesuai dengan pengguna dan tanggal
         $absenMasuk = Absensi::where('user_id', $user)
             ->where('tanggal', Carbon::now('Asia/Jakarta')->toDateString())
             ->first();
 
         if ($absenMasuk) {
+            // Perbarui absen masuk dengan informasi absen keluar
             $absenMasuk->jam_keluar = $jamKeluar;
             $absenMasuk->save();
 
             return response()->json(['message' => 'Absen keluar berhasil disimpan']);
         } else {
+            // Jika tidak ada absen masuk yang sesuai, tambahkan data absen keluar baru
             $jamMasuk = null; // Sesuaikan dengan cara Anda menyimpan data jam masuk
             $absenKeluar = new Absensi([
                 'user_id' => $user,
@@ -138,6 +146,36 @@ class AbsensiApiController extends Controller
             $absenKeluar->save();
 
             return response()->json(['message' => 'Absen keluar berhasil disimpan']);
+        }
+    }
+
+    public function koordinatTambahan(Request $request)
+    {
+        // Ambil data Coordinate terbaru
+        $coordinate = AktifKoordinat::latest()->first(); // Anggap model ini adalah Coordinate
+
+        // Ambil nilai active
+        $toggleStatus = $coordinate->active ? 1 : 0;
+
+        // Jika active (true)
+        if ($toggleStatus == 1) {
+            // Koordinat Kantor Bupati Pasaman
+            return response()->json([
+                'success' => true,
+                'message' => 'Data Koordinat Berhasil Ditampilkan',
+                'latitude' => 0.14050633473117458,
+                'longitude' => 100.16708799628992,
+            ]);
+        }
+        // Jika tidak active (false)
+        else {
+            // Koordinat Sentosa Island
+            return response()->json([
+                'success' => false,
+                'message' => 'Data Koordinat Gagal Ditampilkan',
+                'latitude' => 1.2488342315929606, 
+                'longitude' => 103.83065892464833,
+            ]);
         }
     }
 }

@@ -11,7 +11,7 @@
                             <label for="opd" class="col-sm-2 col-form-label">Pilih OPD</label>
                             <div class="col-sm-10">
                                 @if (Auth::user()->role == 3 || Auth::user()->role == 4)
-                                    <select name="opd" id="opd" class="form-control" required>
+                                    <select name="opd" id="opd" class="form-control select2" required>
                                         <option value="{{ request('opd') }}" disabled selected>Pilih OPD</option>
 
                                         @php
@@ -81,7 +81,7 @@
                                             <td class="tengah">
                                                 <h4><strong>PEMERINTAH KABUPATEN PASAMAN</strong></h4>
                                                 @if (strcasecmp($selectedOpd->name, 'ASISTEN PEMERINTAHAN') == 0 ||
-                                                        strcasecmp($selectedOpd->name, 'ASISTEN PEREKONOMIAN PEMBANGUNAN DAN KESEJAHTERAAN RAKYAT') == 0 ||
+                                                        strcasecmp($selectedOpd->name, 'ASISTEN PEREKONOMIAN DAN PEMBANGUNAN') == 0 ||
                                                         strcasecmp($selectedOpd->name, 'ASISTEN ADMINISTRASI UMUM') == 0)
                                                     <h3
                                                         style="font-weight: bold; padding-left:50px; padding-right:50px; text-transform: uppercase">
@@ -195,7 +195,7 @@
                                                                 $hasLeave = isset($leaveData[$user->id][$key]) && $leaveData[$user->id][$key] == 'Cuti';
                                                                 $hasAttendance = $attendance['jam_masuk'] !== '-' && $attendance['jam_keluar'] !== '-';
                                                                 
-                                                                $isEselonII = $user->eselon && $user->eselon->name === 'Eselon II';
+                                                                $isEselonII = $user->eselon && ($user->eselon->name === 'Eselon II' || $user->eselon->name === 'Eselon II A' || $user->eselon->name === 'Eselon II B');
                                                                 
                                                                 // Hitung jam kerja jika ada kedatangan dan kepergian
                                                                 $jam_masuk = $attendance['jam_masuk'];
@@ -320,30 +320,35 @@
                                         <tr>
                                             <td style="text-align: center; padding-right: 15%; ">
                                                 @if ($kepalaDinas)
-                                                    KEPALA DINAS
+                                                    KEPALA DINAS<br>
                                                 @elseif ($kepalaBadan)
-                                                    KEPALA BADAN
+                                                    KEPALA BADAN<br>
                                                 @elseif ($sekda)
-                                                    SEKRETARIS DAERAH
+                                                    SEKRETARIS DAERAH<br>
                                                 @elseif ($inspektur)
-                                                    INSPEKTUR
+                                                    INSPEKTUR<br>
                                                 @elseif ($camat)
-                                                    CAMAT
+                                                    CAMAT<br>
                                                 @elseif ($direktur)
-                                                    DIREKTUR
+                                                    DIREKTUR<br>
                                                 @elseif ($kepalaSatuan)
-                                                    KEPALA SATUAN
+                                                    KEPALA SATUAN<br>
                                                 @elseif ($asisten1)
-                                                    ASISTEN PEMERINTAHAN
+                                                    ASISTEN PEMERINTAHAN<br>
                                                 @elseif ($asisten2)
-                                                ASISTEN PEREKONOMIAN<br>PEMBANGUNAN DAN KESEJAHTERAAN RAKYAT
+                                                    ASISTEN PEREKONOMIAN DAN PEMBANGUNAN
                                                 @elseif ($asisten3)
-                                                    ASISTEN ADMINISTRASI UMUM
+                                                    ASISTEN ADMINISTRASI UMUM<br>
                                                 @else
                                                     -
                                                 @endif
                                             </td>
-                                            <td style="text-align: center; padding-left: 20%;">KASUBAG UMUM DAN KEPEGAWAIAN
+                                            <td style="text-align: center; padding-left: 20%;">
+                                                @if ($kasubagTu)
+                                                    KASUBBAG TU PIMPINAN, STAF AHLI<br>DAN KEPEGAWAIAN
+                                                @else
+                                                    KASUBAG UMUM DAN KEPEGAWAIAN<br>
+                                                @endif
                                             </td>
                                         </tr>
                                         <tr>
@@ -414,8 +419,23 @@
 
 
                                             <td style="text-align: center; padding-left: 20%;">
-                                                <strong><u>{{ $kasubag->name ?? '-' }}</u></strong><br>
-                                                <strong> NIP.{{ $kasubag->nip ?? '-' }}</strong>
+                                                <strong><u>
+                                                        @if ($kasubag)
+                                                            {{ $kasubag->name ?? '-' }}
+                                                        @elseif ($kasubagTu)
+                                                            {{ $kasubagTu->name ?? '-' }}
+                                                        @else
+                                                            -
+                                                        @endif
+                                                    </u></strong><br>
+                                                <strong> NIP.@if ($kasubag)
+                                                        {{ $kasubag->nip ?? '-' }}
+                                                    @elseif ($kasubagTu)
+                                                        {{ $kasubagTu->nip ?? '-' }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </strong>
                                             </td>
                                         </tr>
 

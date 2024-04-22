@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
-use App\Models\Koordinat;
 use App\Models\Opd;
+use App\Models\Koordinat;
 use Illuminate\Http\Request;
+use App\Models\AktifKoordinat;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class KoordinatController extends Controller
@@ -100,6 +101,20 @@ class KoordinatController extends Controller
             $latitude = $user->opd->koordinat->latitude; // Akses latitude melalui relasi
             $longitude = $user->opd->koordinat->longitude; // Akses longitude melalui relasi
 
+        }
+    }
+
+    public function toggleKoordinat(Request $request)
+    {
+        try {
+            $koordinat = AktifKoordinat::latest()->first();
+
+            $koordinat->active = !$koordinat->active;
+            $koordinat->save();
+
+            return redirect()->back()->with('success', 'Status koordinat berhasil diubah');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal mengubah status koordinat: ' . $e->getMessage());
         }
     }
 }
