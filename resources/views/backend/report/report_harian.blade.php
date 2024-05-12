@@ -202,7 +202,7 @@
                                                                 $hasTugas = isset($tbData[$user->id][$key]) && $tbData[$user->id][$key] == 'TB';
 
                                                                 $isEselonII = $user->eselon && ($user->eselon->name === 'Eselon II' || $user->eselon->name === 'Eselon II A' || $user->eselon->name === 'Eselon II B');
-
+                                                                $isManual = $user->is_manual == 1;
                                                                 // Hitung jam kerja jika ada kedatangan dan kepergian
                                                                 $jam_masuk = $attendance['jam_masuk'];
                                                                 $jam_keluar = $attendance['jam_keluar'] ?? '-';
@@ -234,6 +234,8 @@
                                                                     @if (!$hasDuty && !$hasPermission && !$hasSick && !$hasLeave && !$hasTugas)
                                                                         @if ($isEselonII)
                                                                             <td colspan="3" class="rata-tengah">-</td>
+                                                                        @elseif ($isManual)
+                                                                            <td colspan="3" class="rata-tengah">M</td>
                                                                         @else
                                                                             <td colspan="3" class="rata-tengah">TK</td>
                                                                             @php

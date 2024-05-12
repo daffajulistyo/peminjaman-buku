@@ -177,101 +177,106 @@
 
                                             @foreach ($users as $user)
                                                 @if ($user->role == 2)
-                                                <tr style="background-color: {{ ($user->status === 'PNS' || $user->status === 'PPPK') ? '#f4f4f9' : '#FFFFFF' }};">
+                                                    <tr
+                                                        style="background-color: {{ $user->status === 'PNS' || $user->status === 'PPPK' ? '#f4f4f9' : '#FFFFFF' }};">
 
                                                         <td class="rata-tengah" style="font-size: 14px;">
                                                             {{ $i++ }}</td>
                                                         <td class="name-nowrap" style="font-size: 14px;">
                                                             {{ $user->name }}</td>
 
-                                                            @foreach ($attendanceData[$user->id] as $key => $attendance)
-                                                                @if ($attendance['jam_masuk'] == 'Libur Nasional')
-                                                                    <td colspan="3" class="rata-tengah">Libur Nasional
-                                                                    </td>
-                                                                @else
-                                                                    <?php
-                                                                    $hasDuty = isset($dutyData[$user->id][$key]) && $dutyData[$user->id][$key] == 'Dinas';
-                                                                    $hasPermission = isset($permissionData[$user->id][$key]) && $permissionData[$user->id][$key] == 'Izin';
-                                                                    $hasSick = isset($sickData[$user->id][$key]) && $sickData[$user->id][$key] == 'Sakit';
-                                                                    $hasLeave = isset($leaveData[$user->id][$key]) && $leaveData[$user->id][$key] == 'Cuti';
-                                                                    $hasAttendance = $attendance['jam_masuk'] !== '-' && $attendance['jam_keluar'] !== '-';
-                                                                    $hasTugas = isset($tbData[$user->id][$key]) && $tbData[$user->id][$key] == 'TB';
+                                                        @foreach ($attendanceData[$user->id] as $key => $attendance)
+                                                            @if ($attendance['jam_masuk'] == 'Libur Nasional')
+                                                                <td colspan="3" class="rata-tengah">Libur Nasional
+                                                                </td>
+                                                            @else
+                                                                <?php
+                                                                $hasDuty = isset($dutyData[$user->id][$key]) && $dutyData[$user->id][$key] == 'Dinas';
+                                                                $hasPermission = isset($permissionData[$user->id][$key]) && $permissionData[$user->id][$key] == 'Izin';
+                                                                $hasSick = isset($sickData[$user->id][$key]) && $sickData[$user->id][$key] == 'Sakit';
+                                                                $hasLeave = isset($leaveData[$user->id][$key]) && $leaveData[$user->id][$key] == 'Cuti';
+                                                                $hasAttendance = $attendance['jam_masuk'] !== '-' && $attendance['jam_keluar'] !== '-';
+                                                                $hasTugas = isset($tbData[$user->id][$key]) && $tbData[$user->id][$key] == 'TB';
 
-                                                                    $isEselonII = $user->eselon && ($user->eselon->name === 'Eselon II' || $user->eselon->name === 'Eselon II A' || $user->eselon->name === 'Eselon II B');
-                                                                    $jam_masuk = $attendance['jam_masuk'];
-                                                                    $jam_keluar = $attendance['jam_keluar'] ?? '-';
-                                                                    $durasi_kerja = '-';
-                                                                    if ($jam_masuk !== '-' && $jam_keluar !== '-') {
-                                                                        $durasi_detik = strtotime($jam_keluar) - strtotime($jam_masuk) - 3600; // Kurangkan 1 jam
-                                                                        if ($durasi_detik < 0) {
-                                                                            $durasi_detik = 0; // Pastikan tidak negatif
-                                                                        }
-                                                                        $jam = floor($durasi_detik / 3600);
-                                                                        $menit = floor(($durasi_detik % 3600) / 60);
-                                                                        $durasi_kerja = $jam . ' Jam ' . $menit . ' Menit';
+                                                                $isManual = $user->is_manual == 1;
+
+                                                                $isEselonII = $user->eselon && ($user->eselon->name === 'Eselon II' || $user->eselon->name === 'Eselon II A' || $user->eselon->name === 'Eselon II B');
+                                                                $jam_masuk = $attendance['jam_masuk'];
+                                                                $jam_keluar = $attendance['jam_keluar'] ?? '-';
+                                                                $durasi_kerja = '-';
+                                                                if ($jam_masuk !== '-' && $jam_keluar !== '-') {
+                                                                    $durasi_detik = strtotime($jam_keluar) - strtotime($jam_masuk) - 3600; // Kurangkan 1 jam
+                                                                    if ($durasi_detik < 0) {
+                                                                        $durasi_detik = 0; // Pastikan tidak negatif
                                                                     }
-                                                                    ?>
+                                                                    $jam = floor($durasi_detik / 3600);
+                                                                    $menit = floor(($durasi_detik % 3600) / 60);
+                                                                    $durasi_kerja = $jam . ' Jam ' . $menit . ' Menit';
+                                                                }
+                                                                ?>
 
-                                                                    @if ($hasAttendance)
-                                                                        <td class="rata-tengah"
-                                                                            style="font-size: 12px; font-weight: bold; font-style:italic; ">
-                                                                            {{ $attendance['jam_masuk'] }}</td>
+                                                                @if ($hasAttendance)
+                                                                    <td class="rata-tengah"
+                                                                        style="font-size: 12px; font-weight: bold; font-style:italic; ">
+                                                                        {{ $attendance['jam_masuk'] }}</td>
 
-                                                                        <td class="rata-tengah"
-                                                                            style="font-size: 12px; font-weight: bold; font-style:italic">
-                                                                            {{ $attendance['jam_keluar'] ?? '-' }}</td>
+                                                                    <td class="rata-tengah"
+                                                                        style="font-size: 12px; font-weight: bold; font-style:italic">
+                                                                        {{ $attendance['jam_keluar'] ?? '-' }}</td>
 
-                                                                        <td class="rata-tengah"
-                                                                            style="font-size: 12px; font-weight: bold; font-style:italic">
-                                                                            -</td>
-                                                                    @else
-                                                                        @if (!$hasDuty && !$hasPermission && !$hasSick && !$hasLeave && !$hasTugas)
-                                                                            @if ($isEselonII)
-                                                                                <td colspan="3" class="rata-tengah">-
-                                                                                </td>
-                                                                            @else
-                                                                                <td colspan="3" class="rata-tengah">TK
-                                                                                </td>
-                                                                                @php
-                                                                                    $totalTK++;
-                                                                                @endphp
-                                                                            @endif
-                                                                        @else
-                                                                            <td @if ($hasDuty || $hasPermission || $hasSick || $hasLeave || $hasTugas) colspan="3" @endif
-                                                                                class="rata-tengah">
-                                                                                @if ($hasDuty)
-                                                                                    Dinas
-                                                                                    @php
-                                                                                        $totalDinas++;
-                                                                                    @endphp
-                                                                                @elseif ($hasPermission)
-                                                                                    Izin
-                                                                                    @php
-                                                                                        $totalIzin++;
-                                                                                    @endphp
-                                                                                @elseif ($hasSick)
-                                                                                    Sakit
-                                                                                    @php
-                                                                                        $totalSakit++;
-                                                                                    @endphp
-                                                                                @elseif ($hasLeave)
-                                                                                    Cuti
-                                                                                    @php
-                                                                                        $totalCuti++;
-                                                                                    @endphp
-                                                                                @elseif ($hasTugas)
-                                                                                    TB
-                                                                                    @php
-                                                                                        $totalTb++;
-                                                                                    @endphp
-                                                                                @else
-                                                                                    {{ $attendance['jam_masuk'] }}
-                                                                                @endif
+                                                                    <td class="rata-tengah"
+                                                                        style="font-size: 12px; font-weight: bold; font-style:italic">
+                                                                        -</td>
+                                                                @else
+                                                                    @if (!$hasDuty && !$hasPermission && !$hasSick && !$hasLeave && !$hasTugas)
+                                                                        @if ($isEselonII)
+                                                                            <td colspan="3" class="rata-tengah">-
                                                                             </td>
+                                                                        @elseif ($isManual)
+                                                                            <td colspan="3" class="rata-tengah">M</td>
+                                                                        @else
+                                                                            <td colspan="3" class="rata-tengah">TK
+                                                                            </td>
+                                                                            @php
+                                                                                $totalTK++;
+                                                                            @endphp
                                                                         @endif
+                                                                    @else
+                                                                        <td @if ($hasDuty || $hasPermission || $hasSick || $hasLeave || $hasTugas) colspan="3" @endif
+                                                                            class="rata-tengah">
+                                                                            @if ($hasDuty)
+                                                                                Dinas
+                                                                                @php
+                                                                                    $totalDinas++;
+                                                                                @endphp
+                                                                            @elseif ($hasPermission)
+                                                                                Izin
+                                                                                @php
+                                                                                    $totalIzin++;
+                                                                                @endphp
+                                                                            @elseif ($hasSick)
+                                                                                Sakit
+                                                                                @php
+                                                                                    $totalSakit++;
+                                                                                @endphp
+                                                                            @elseif ($hasLeave)
+                                                                                Cuti
+                                                                                @php
+                                                                                    $totalCuti++;
+                                                                                @endphp
+                                                                            @elseif ($hasTugas)
+                                                                                TB
+                                                                                @php
+                                                                                    $totalTb++;
+                                                                                @endphp
+                                                                            @else
+                                                                                {{ $attendance['jam_masuk'] }}
+                                                                            @endif
+                                                                        </td>
                                                                     @endif
                                                                 @endif
-                                                            @endforeach
+                                                            @endif
+                                                        @endforeach
                                                     </tr>
                                                 @endif
                                             @endforeach
