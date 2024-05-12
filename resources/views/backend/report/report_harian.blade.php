@@ -311,6 +311,11 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="rata-tengah">5</td>
+                                                    <td class="kiri">Tugas Belajar</td>
+                                                    <td class="rata-tengah">{{ $totalTb }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="rata-tengah">6</td>
                                                     <td class="kiri">Tanpa Keterangan</td>
                                                     <td class="rata-tengah">{{ $totalTK }}</td>
                                                 </tr>

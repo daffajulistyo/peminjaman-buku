@@ -511,6 +511,7 @@ class ReportController extends Controller
         $permissionData = [];
         $sickData = [];
         $leaveData = [];
+        $tugasData = [];
 
         foreach ($users as $user) {
             $userAttendance = [];
@@ -518,6 +519,7 @@ class ReportController extends Controller
             $userPermission = [];
             $userSick = [];
             $userLeave = [];
+            $userTugas = [];
 
             foreach ($dates as $date) {
                 // Fetch attendance data
@@ -566,7 +568,7 @@ class ReportController extends Controller
                 $userPermission[$date] = $hasPermission ? 'Izin' : '-';
                 $userSick[$date] = $hasSick ? 'Sakit' : '-';
                 $userLeave[$date] = $leave ? 'Cuti' : '-';
-                $userTugasBelajar[$date] = $tugasBelajar ? 'TB' : '-';
+                $userTugas[$date] = $tugasBelajar ? 'TB' : '-';
             }
 
             // Add data to respective arrays
@@ -575,7 +577,7 @@ class ReportController extends Controller
             $permissionData[$user->id] = $userPermission;
             $sickData[$user->id] = $userSick;
             $leaveData[$user->id] = $userLeave;
-            $tbData[$user->id] = $userTugasBelajar;
+            $tugasData[$user->id] = $userTugas;
         }
 
         // Jika opd yang dipilih adalah Sekretariat Daerah
@@ -596,6 +598,7 @@ class ReportController extends Controller
                     $userPermission = [];
                     $userSick = [];
                     $userLeave = [];
+                    $userTugas = [];
 
                     foreach ($dates as $date) {
                         // Fetch attendance data
@@ -644,7 +647,7 @@ class ReportController extends Controller
                         $userPermission[$date] = $hasPermission ? 'Izin' : '-';
                         $userSick[$date] = $hasSick ? 'Sakit' : '-';
                         $userLeave[$date] = $leave ? 'Cuti' : '-';
-                        $userTugasBelajar[$date] = $tugasBelajar ? 'TB' : '-';
+                        $userTugas[$date] = $tugasBelajar ? 'TB' : '-';
                     }
 
                     // Add data to respective arrays
@@ -653,7 +656,7 @@ class ReportController extends Controller
                     $permissionData[$userFromOtherOpd->id] = $userPermission;
                     $sickData[$userFromOtherOpd->id] = $userSick;
                     $leaveData[$userFromOtherOpd->id] = $userLeave;
-                    $tbData[$user->id] = $userTugasBelajar;
+                    $tugasData[$user->id] = $userTugas;
                 }
             }
         }
@@ -725,7 +728,7 @@ class ReportController extends Controller
             'permissionData' => $permissionData,
             'sickData' => $sickData,
             'leaveData' => $leaveData,
-            'tbData' => $tbData,
+            'tbData' => $tugasData,
             'weekNumber' => $weekNumber,
             'startOfWeek' => $startOfWeek,
             'endOfWeek' => $endOfWeek,
@@ -793,6 +796,7 @@ class ReportController extends Controller
         $permissionData = [];
         $sickData = [];
         $leaveData = [];
+        $tugasData = [];
 
         foreach ($users as $user) {
             $userAttendance = [];
@@ -800,6 +804,7 @@ class ReportController extends Controller
             $userPermission = [];
             $userSick = [];
             $userLeave = [];
+            $userTugas = [];
 
             foreach ($dates as $date) {
                 // Fetch attendance data
@@ -848,7 +853,7 @@ class ReportController extends Controller
                 $userPermission[$date] = $hasPermission ? 'Izin' : '-';
                 $userSick[$date] = $hasSick ? 'Sakit' : '-';
                 $userLeave[$date] = $leave ? 'Cuti' : '-';
-                $userTugasBelajar[$date] = $tugasBelajar ? 'TB' : '-';
+                $userTugas[$date] = $tugasBelajar ? 'TB' : '-';
 
             }
 
@@ -858,7 +863,7 @@ class ReportController extends Controller
             $permissionData[$user->id] = $userPermission;
             $sickData[$user->id] = $userSick;
             $leaveData[$user->id] = $userLeave;
-            $tbData[$user->id] = $userTugasBelajar;
+            $tugasData[$user->id] = $userTugas;
 
         }
 
@@ -880,6 +885,7 @@ class ReportController extends Controller
                     $userPermission = [];
                     $userSick = [];
                     $userLeave = [];
+                    $userTugas = [];
 
                     foreach ($dates as $date) {
                         // Fetch attendance data
@@ -928,7 +934,7 @@ class ReportController extends Controller
                         $userPermission[$date] = $hasPermission ? 'Izin' : '-';
                         $userSick[$date] = $hasSick ? 'Sakit' : '-';
                         $userLeave[$date] = $leave ? 'Cuti' : '-';
-                        $userTugasBelajar[$date] = $tugasBelajar ? 'TB' : '-';
+                        $userTugas[$date] = $tugasBelajar ? 'TB' : '-';
 
                     }
 
@@ -938,7 +944,7 @@ class ReportController extends Controller
                     $permissionData[$userFromOtherOpd->id] = $userPermission;
                     $sickData[$userFromOtherOpd->id] = $userSick;
                     $leaveData[$userFromOtherOpd->id] = $userLeave;
-                    $tbData[$user->id] = $userTugasBelajar;
+                    $tugasData[$user->id] = $userTugas;
 
                 }
             }
@@ -1006,8 +1012,7 @@ class ReportController extends Controller
             'permissionData' => $permissionData,
             'sickData' => $sickData,
             'leaveData' => $leaveData,
-            'tbData' => $tbData,
-
+            'tbData' => $tugasData,
             'kepalaDinas' => $kepalaDinas,
             'sekda' => $sekda,
             'kepalaBadan' => $kepalaBadan,
