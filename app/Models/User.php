@@ -12,6 +12,7 @@ use App\Models\Bidang;
 use App\Models\Pangkat;
 use App\Models\Jabatan;
 use App\Models\Absensi;
+use App\Models\TugasBelajar;
 
 class User extends Authenticatable
 {
@@ -104,5 +105,10 @@ class User extends Authenticatable
     public function opdChanges()
     {
         return $this->hasMany(OpdChange::class);
+    }
+
+    public function tugasBelajar()
+    {
+        return $this->hasMany(TugasBelajar::class);
     }
 }

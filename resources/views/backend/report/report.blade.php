@@ -347,8 +347,8 @@
                                                         }
 
                                                     @endphp
-                                                    <tr>
-                                                        <td class="rata-tengah">{{ $no++ }}</td>
+                                                <tr style="background-color: {{ ($user->status === 'PNS' || $user->status === 'PPPK') ? '#f4f4f9' : '#FFFFFF' }};">
+                                                    <td class="rata-tengah">{{ $no++ }}</td>
                                                         <td class="name-nowrap">{{ $user->name }}</td>
                                                         <td class="rata-tengah">{{ $user->nip }}</td>
                                                         <td class="rata-tengah">

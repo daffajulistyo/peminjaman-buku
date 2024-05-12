@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Dinas;
 use App\Models\Sakit;
 use App\Models\Absensi;
+use App\Models\TugasBelajar;
 use App\Models\Koordinat;
 use Illuminate\Http\Request;
 use App\Models\LiburNasional;
@@ -545,6 +546,11 @@ class ReportController extends Controller
                     ->whereDate('tanggal_selesai', '>=', $date)
                     ->exists();
 
+                $tugasBelajar = TugasBelajar::where('user_id', $user->id)
+                    ->whereDate('tanggal_mulai', '<=', $date)
+                    ->whereDate('tanggal_selesai', '>=', $date)
+                    ->exists();
+
                 // Check if the date is a national holiday
                 $isNationalHoliday = $nationalHolidays->contains('tanggal', $date);
 
@@ -560,6 +566,7 @@ class ReportController extends Controller
                 $userPermission[$date] = $hasPermission ? 'Izin' : '-';
                 $userSick[$date] = $hasSick ? 'Sakit' : '-';
                 $userLeave[$date] = $leave ? 'Cuti' : '-';
+                $userTugasBelajar[$date] = $tugasBelajar ? 'TB' : '-';
             }
 
             // Add data to respective arrays
@@ -568,6 +575,7 @@ class ReportController extends Controller
             $permissionData[$user->id] = $userPermission;
             $sickData[$user->id] = $userSick;
             $leaveData[$user->id] = $userLeave;
+            $tbData[$user->id] = $userTugasBelajar;
         }
 
         // Jika opd yang dipilih adalah Sekretariat Daerah
@@ -616,6 +624,11 @@ class ReportController extends Controller
                             ->whereDate('tanggal_selesai', '>=', $date)
                             ->exists();
 
+                        $tugasBelajar = TugasBelajar::where('user_id', $user->id)
+                            ->whereDate('tanggal_mulai', '<=', $date)
+                            ->whereDate('tanggal_selesai', '>=', $date)
+                            ->exists();
+
                         // Check if the date is a national holiday
                         $isNationalHoliday = $nationalHolidays->contains('tanggal', $date);
 
@@ -631,6 +644,7 @@ class ReportController extends Controller
                         $userPermission[$date] = $hasPermission ? 'Izin' : '-';
                         $userSick[$date] = $hasSick ? 'Sakit' : '-';
                         $userLeave[$date] = $leave ? 'Cuti' : '-';
+                        $userTugasBelajar[$date] = $tugasBelajar ? 'TB' : '-';
                     }
 
                     // Add data to respective arrays
@@ -639,6 +653,7 @@ class ReportController extends Controller
                     $permissionData[$userFromOtherOpd->id] = $userPermission;
                     $sickData[$userFromOtherOpd->id] = $userSick;
                     $leaveData[$userFromOtherOpd->id] = $userLeave;
+                    $tbData[$user->id] = $userTugasBelajar;
                 }
             }
         }
@@ -710,6 +725,7 @@ class ReportController extends Controller
             'permissionData' => $permissionData,
             'sickData' => $sickData,
             'leaveData' => $leaveData,
+            'tbData' => $tbData,
             'weekNumber' => $weekNumber,
             'startOfWeek' => $startOfWeek,
             'endOfWeek' => $endOfWeek,
@@ -744,16 +760,16 @@ class ReportController extends Controller
             ->orderByRaw('eselon_id IS NULL, eselon_id, pangkat_id IS NULL, pangkat_id, status = "PNS" DESC, status')
             ->get();
 
-        // Mendapatkan daftar pengguna yang telah berpindah OPD dalam rentang tanggal yang dipilih
-        $usersChangedOpd = User::whereIn('id', function ($query) use ($selectedOpdId, $startDate, $endDate) {
-            $query->select('user_id')
-                ->from('opd_changes')
-                ->where('new_opd_id', $selectedOpdId)
-                ->whereBetween('tanggal_pindah', [$startDate, $endDate]);
-        })->get();
+        // // Mendapatkan daftar pengguna yang telah berpindah OPD dalam rentang tanggal yang dipilih
+        // $usersChangedOpd = User::whereIn('id', function ($query) use ($selectedOpdId, $startDate, $endDate) {
+        //     $query->select('user_id')
+        //         ->from('opd_changes')
+        //         ->where('new_opd_id', $selectedOpdId)
+        //         ->whereBetween('tanggal_pindah', [$startDate, $endDate]);
+        // })->get();
 
-        // Menggabungkan daftar pengguna yang telah berpindah OPD ke daftar pengguna OPD yang dipilih
-        $users = $users->merge($usersChangedOpd);
+        // // Menggabungkan daftar pengguna yang telah berpindah OPD ke daftar pengguna OPD yang dipilih
+        // $users = $users->merge($usersChangedOpd);
 
         $dates = [];
         $currentDate = Carbon::parse($startDate);
@@ -812,6 +828,11 @@ class ReportController extends Controller
                     ->whereDate('tanggal_selesai', '>=', $date)
                     ->exists();
 
+                $tugasBelajar = TugasBelajar::where('user_id', $user->id)
+                    ->whereDate('tanggal_mulai', '<=', $date)
+                    ->whereDate('tanggal_selesai', '>=', $date)
+                    ->exists();
+
                 // Check if the date is a national holiday
                 $isNationalHoliday = $nationalHolidays->contains('tanggal', $date);
 
@@ -827,6 +848,8 @@ class ReportController extends Controller
                 $userPermission[$date] = $hasPermission ? 'Izin' : '-';
                 $userSick[$date] = $hasSick ? 'Sakit' : '-';
                 $userLeave[$date] = $leave ? 'Cuti' : '-';
+                $userTugasBelajar[$date] = $tugasBelajar ? 'TB' : '-';
+
             }
 
             // Add data to respective arrays
@@ -835,6 +858,8 @@ class ReportController extends Controller
             $permissionData[$user->id] = $userPermission;
             $sickData[$user->id] = $userSick;
             $leaveData[$user->id] = $userLeave;
+            $tbData[$user->id] = $userTugasBelajar;
+
         }
 
         // Jika opd yang dipilih adalah Sekretariat Daerah
@@ -883,6 +908,11 @@ class ReportController extends Controller
                             ->whereDate('tanggal_selesai', '>=', $date)
                             ->exists();
 
+                            $tugasBelajar = TugasBelajar::where('user_id', $user->id)
+                            ->whereDate('tanggal_mulai', '<=', $date)
+                            ->whereDate('tanggal_selesai', '>=', $date)
+                            ->exists();
+
                         // Check if the date is a national holiday
                         $isNationalHoliday = $nationalHolidays->contains('tanggal', $date);
 
@@ -898,6 +928,8 @@ class ReportController extends Controller
                         $userPermission[$date] = $hasPermission ? 'Izin' : '-';
                         $userSick[$date] = $hasSick ? 'Sakit' : '-';
                         $userLeave[$date] = $leave ? 'Cuti' : '-';
+                        $userTugasBelajar[$date] = $tugasBelajar ? 'TB' : '-';
+
                     }
 
                     // Add data to respective arrays
@@ -906,6 +938,8 @@ class ReportController extends Controller
                     $permissionData[$userFromOtherOpd->id] = $userPermission;
                     $sickData[$userFromOtherOpd->id] = $userSick;
                     $leaveData[$userFromOtherOpd->id] = $userLeave;
+                    $tbData[$user->id] = $userTugasBelajar;
+
                 }
             }
         }
@@ -972,6 +1006,8 @@ class ReportController extends Controller
             'permissionData' => $permissionData,
             'sickData' => $sickData,
             'leaveData' => $leaveData,
+            'tbData' => $tbData,
+
             'kepalaDinas' => $kepalaDinas,
             'sekda' => $sekda,
             'kepalaBadan' => $kepalaBadan,

@@ -111,12 +111,13 @@
                                         <tr>
                                             <td colspan="2" class="kiri">
                                                 <h6>Satuan Kerja : @if (strcasecmp($selectedOpd->name, 'ASISTEN PEMERINTAHAN') == 0 ||
-                                                    strcasecmp($selectedOpd->name, 'ASISTEN PEREKONOMIAN PEMBANGUNAN DAN KESEJAHTERAAN RAKYAT') == 0 ||
-                                                    strcasecmp($selectedOpd->name, 'ASISTEN ADMINISTRASI UMUM') == 0)
-                                                SEKRETARIAT DAERAH
-                                            @else
-                                                {{ $selectedOpd->name }}
-                                            @endif</h6>
+                                                        strcasecmp($selectedOpd->name, 'ASISTEN PEREKONOMIAN PEMBANGUNAN DAN KESEJAHTERAAN RAKYAT') == 0 ||
+                                                        strcasecmp($selectedOpd->name, 'ASISTEN ADMINISTRASI UMUM') == 0)
+                                                        SEKRETARIAT DAERAH
+                                                    @else
+                                                        {{ $selectedOpd->name }}
+                                                    @endif
+                                                </h6>
                                             </td>
                                         </tr>
                                         <tr>
@@ -175,11 +176,15 @@
                                                 $totalSakit = 0;
                                                 $totalCuti = 0;
                                                 $totalTK = 0;
+                                                $totalTb = 0;
+
                                             @endphp
 
                                             @foreach ($users as $user)
                                                 @if ($user->role == 2)
-                                                    <tr>
+                                                    <tr
+                                                        style="background-color: {{ $user->status === 'PNS' || $user->status === 'PPPK' ? '#f4f4f9' : '#FFFFFF' }};">
+
                                                         <td class="rata-tengah" style="font-size: 14px;">
                                                             {{ $i++ }}</td>
                                                         <td class="name-nowrap" style="font-size: 14px;">
@@ -194,9 +199,10 @@
                                                                 $hasSick = isset($sickData[$user->id][$key]) && $sickData[$user->id][$key] == 'Sakit';
                                                                 $hasLeave = isset($leaveData[$user->id][$key]) && $leaveData[$user->id][$key] == 'Cuti';
                                                                 $hasAttendance = $attendance['jam_masuk'] !== '-' && $attendance['jam_keluar'] !== '-';
-                                                                
+                                                                $hasTugas = isset($tbData[$user->id][$key]) && $tbData[$user->id][$key] == 'TB';
+
                                                                 $isEselonII = $user->eselon && ($user->eselon->name === 'Eselon II' || $user->eselon->name === 'Eselon II A' || $user->eselon->name === 'Eselon II B');
-                                                                
+
                                                                 // Hitung jam kerja jika ada kedatangan dan kepergian
                                                                 $jam_masuk = $attendance['jam_masuk'];
                                                                 $jam_keluar = $attendance['jam_keluar'] ?? '-';
@@ -209,7 +215,7 @@
                                                                     $jam = floor($durasi_detik / 3600);
                                                                     $menit = floor(($durasi_detik % 3600) / 60);
                                                                     $durasi_kerja = $jam . ' Jam ' . $menit . ' Menit';
-                                                                } 
+                                                                }
                                                                 ?>
 
                                                                 @if ($hasAttendance)
@@ -225,7 +231,7 @@
                                                                         style="font-size: 12px; font-style: italic; font-weight:600">
                                                                         -</td>
                                                                 @else
-                                                                    @if (!$hasDuty && !$hasPermission && !$hasSick && !$hasLeave)
+                                                                    @if (!$hasDuty && !$hasPermission && !$hasSick && !$hasLeave && !$hasTugas)
                                                                         @if ($isEselonII)
                                                                             <td colspan="3" class="rata-tengah">-</td>
                                                                         @else
@@ -235,7 +241,7 @@
                                                                             @endphp
                                                                         @endif
                                                                     @else
-                                                                        <td @if ($hasDuty || $hasPermission || $hasSick || $hasLeave) colspan="3" @endif
+                                                                        <td @if ($hasDuty || $hasPermission || $hasSick || $hasLeave || $hasTugas) colspan="3" @endif
                                                                             class="rata-tengah">
                                                                             @if ($hasDuty)
                                                                                 Dinas
@@ -256,6 +262,11 @@
                                                                                 Cuti
                                                                                 @php
                                                                                     $totalCuti++;
+                                                                                @endphp
+                                                                            @elseif ($hasTugas)
+                                                                                TB
+                                                                                @php
+                                                                                    $totalTb++;
                                                                                 @endphp
                                                                             @else
                                                                                 {{ $attendance['jam_masuk'] }}

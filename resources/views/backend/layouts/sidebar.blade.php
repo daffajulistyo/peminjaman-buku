@@ -119,7 +119,19 @@
                                 </li>
                             </ul>
                         </li>
+                        <li
+                        class="nav-item {{ $activeRoute == 'tugas.index' || $activeRoute == 'tugas.show' ? 'menu-open' : '' }}">
+                        <a href="{{ route('tugas.index') }}"
+                            class="nav-link {{ $activeRoute == 'tugas.index' || $activeRoute == 'tugas.show' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-book"></i>
+                            <p>
+                                Tugas Belajar
+                                <!-- <span class="right badge badge-danger">New</span> -->
+                            </p>
+                        </a>
+                    </li>
                     @endif
+
 
 
                     <li
@@ -194,7 +206,7 @@
                                         <p>Nama</p>
                                     </a>
                                 </li>
-                                
+
                             </ul>
                         </li>
                         <li

@@ -21,6 +21,7 @@ use App\Http\Controllers\Backend\KoordinatController;
 use App\Http\Controllers\Backend\API\AuthApiController;
 use App\Http\Controllers\Backend\LiburNasionalController;
 use App\Http\Controllers\Backend\RekapitulasiController;
+use App\Http\Controllers\Backend\TugasBelajarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,8 +108,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::get('/edit_pegawai/{id}', [PegawaiController::class, 'edit'])->name('pegawai.edit');
         Route::post('/update_pegawai/{id}', [PegawaiController::class, 'update'])->name('pegawai.update');
         Route::get('/delete_pegawai/{id}', [PegawaiController::class, 'destroy'])->name('pegawai.delete');
-        
+
     });
+
+
 
     Route::prefix('absensi')->group(function () {
         // Route::get('list_absensi', [AbsensiController::class, 'index'])->name('absensi.index');
@@ -199,6 +202,16 @@ Route::prefix('absen')->middleware('auth')->group(function () {
     Route::get('/filter', [ReportController::class, 'filterLaporan'])->name('filter');
     Route::get('/print/report/{opd}', [ReportController::class, 'cetakLaporan'])->name('print.report');
 });
+
+Route::prefix('tugas')->group(function () {
+    Route::get('/', [TugasBelajarController::class, 'index'])->name('tugas.index');
+    Route::post('/insert_tugas', [TugasBelajarController::class, 'store'])->name('tugas.insert');
+    Route::get('/add_tugas', [TugasBelajarController::class, 'create'])->name('tugas.show');
+    Route::get('/edit_tugas/{id}', [TugasBelajarController::class, 'edit'])->name('tugas.edit');
+    Route::post('/update_tugas/{id}', [TugasBelajarController::class, 'update'])->name('tugas.update');
+    Route::get('/delete_tugas/{id}', [TugasBelajarController::class, 'destroy'])->name('tugas.delete');
+});
+
 // Route::get('/report/admin', [ReportController::class, 'filterLaporanAdmin'])->name('filter.admin');
 Route::get('/report/admin/name', [ReportController::class, 'cetakLaporanByAdmin'])->name('filter.admin')->middleware(['auth']);
 

@@ -30,7 +30,7 @@
                     </div>
                     <div class="div">
                         <h5>Username</h5>
-                        <input type="text" class="input" name="nip" required>
+                        <input type="text" class="input" name="email" required>
                     </div>
                 </div>
                 <div class="input-div pass">
