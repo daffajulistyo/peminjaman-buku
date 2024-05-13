@@ -50,6 +50,7 @@ class KoordinatController extends Controller
             'alamat' => 'required|string|max:255',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'kecamatan' => 'required|string|max:255',
             'opd_id' => 'nullable|exists:opds,id',
         ]);
 

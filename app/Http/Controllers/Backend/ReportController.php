@@ -53,40 +53,48 @@ class ReportController extends Controller
         $selectedOpdId = $request->input('opd');
         $opd = Opd::find($selectedOpdId);
 
-        $kepalaDinas = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kepala Dinas');
-        })->first();
+        $kepala = User::where('opd_id', $request->input('opd'))
+            ->where(function ($query) {
+                $query->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas');
+                })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kepala Puskesmas');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Inspektur');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Camat');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Direktur');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kepala Satuan');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kepala Badan');
+                    });
+            })
+            ->first();
+
+        $kasubag = User::where('opd_id', $request->input('opd'))
+            ->where(function ($query) {
+                $query->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian');
+                })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kasubbag Umum dan Kepegawaian');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                    });
+            })
+            ->first();
 
         $sekda = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
             $query->where('name', 'Sekretaris Daerah');
-        })->first();
-
-        $kepalaBadan = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kepala Badan');
-        })->first();
-
-        $inspektur = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Inspektur');
-        })->first();
-
-        $camat = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Camat');
-        })->first();
-
-        $direktur = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Direktur');
-        })->first();
-
-        $kasubag = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kasubag Umum dan Kepegawaian');
-        })->first();
-
-        $kasubagTu = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
-        })->first();
-
-        $kepalaSatuan = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kepala Satuan');
         })->first();
 
         $asisten1 = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
@@ -126,15 +134,9 @@ class ReportController extends Controller
         }
 
         return view('backend.report.report', [
-            'kepalaDinas' => $kepalaDinas,
-            'kepalaBadan' => $kepalaBadan,
-            'inspektur' => $inspektur,
-            'direktur' => $direktur,
+            'kepala' => $kepala,
             'sekda' => $sekda,
-            'camat' => $camat,
             'kasubag' => $kasubag,
-            'kasubagTu' => $kasubagTu,
-            'kepalaSatuan' => $kepalaSatuan,
             'opds' => $opds,
             'selectedOpd' => $opd,
             'users' => $users,
@@ -668,40 +670,48 @@ class ReportController extends Controller
         $endOfWeek = $selectedWeek->endOfWeek()->isoFormat('LL');
         $weekNumber = $selectedWeek->isoFormat('W');
 
-        $kepalaDinas = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kepala Dinas');
-        })->first();
+        $kepala = User::where('opd_id', $request->input('opd'))
+            ->where(function ($query) {
+                $query->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas');
+                })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kepala Puskesmas');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Inspektur');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Camat');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Direktur');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kepala Satuan');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kepala Badan');
+                    });
+            })
+            ->first();
+
+        $kasubag = User::where('opd_id', $request->input('opd'))
+            ->where(function ($query) {
+                $query->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian');
+                })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kasubbag Umum dan Kepegawaian');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                    });
+            })
+            ->first();
 
         $sekda = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
             $query->where('name', 'Sekretaris Daerah');
-        })->first();
-
-        $kepalaBadan = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kepala Badan');
-        })->first();
-
-        $inspektur = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Inspektur');
-        })->first();
-
-        $camat = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Camat');
-        })->first();
-
-        $direktur = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Direktur');
-        })->first();
-
-        $kasubag = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kasubag Umum dan Kepegawaian');
-        })->first();
-
-        $kasubagTu = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
-        })->first();
-
-        $kepalaSatuan = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kepala Satuan');
         })->first();
 
         $asisten1 = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
@@ -732,15 +742,9 @@ class ReportController extends Controller
             'weekNumber' => $weekNumber,
             'startOfWeek' => $startOfWeek,
             'endOfWeek' => $endOfWeek,
-            'kepalaDinas' => $kepalaDinas,
+            'kepala' => $kepala,
             'sekda' => $sekda,
-            'kepalaBadan' => $kepalaBadan,
-            'inspektur' => $inspektur,
-            'camat' => $camat,
-            'direktur' => $direktur,
             'kasubag' => $kasubag,
-            'kasubagTu' => $kasubagTu,
-            'kepalaSatuan' => $kepalaSatuan,
             'asisten1' => $asisten1,
             'asisten2' => $asisten2,
             'asisten3' => $asisten3
@@ -854,7 +858,6 @@ class ReportController extends Controller
                 $userSick[$date] = $hasSick ? 'Sakit' : '-';
                 $userLeave[$date] = $leave ? 'Cuti' : '-';
                 $userTugas[$date] = $tugasBelajar ? 'TB' : '-';
-
             }
 
             // Add data to respective arrays
@@ -864,7 +867,6 @@ class ReportController extends Controller
             $sickData[$user->id] = $userSick;
             $leaveData[$user->id] = $userLeave;
             $tugasData[$user->id] = $userTugas;
-
         }
 
         // Jika opd yang dipilih adalah Sekretariat Daerah
@@ -914,7 +916,7 @@ class ReportController extends Controller
                             ->whereDate('tanggal_selesai', '>=', $date)
                             ->exists();
 
-                            $tugasBelajar = TugasBelajar::where('user_id', $user->id)
+                        $tugasBelajar = TugasBelajar::where('user_id', $user->id)
                             ->whereDate('tanggal_mulai', '<=', $date)
                             ->whereDate('tanggal_selesai', '>=', $date)
                             ->exists();
@@ -935,7 +937,6 @@ class ReportController extends Controller
                         $userSick[$date] = $hasSick ? 'Sakit' : '-';
                         $userLeave[$date] = $leave ? 'Cuti' : '-';
                         $userTugas[$date] = $tugasBelajar ? 'TB' : '-';
-
                     }
 
                     // Add data to respective arrays
@@ -945,45 +946,52 @@ class ReportController extends Controller
                     $sickData[$userFromOtherOpd->id] = $userSick;
                     $leaveData[$userFromOtherOpd->id] = $userLeave;
                     $tugasData[$user->id] = $userTugas;
-
                 }
             }
         }
 
-        $kepalaDinas = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kepala Dinas');
-        })->first();
+        $kepala = User::where('opd_id', $request->input('opd'))
+            ->where(function ($query) {
+                $query->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas');
+                })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kepala Puskesmas');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Inspektur');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Camat');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Direktur');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kepala Satuan');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kepala Badan');
+                    });
+            })
+            ->first();
+
+        $kasubag = User::where('opd_id', $request->input('opd'))
+            ->where(function ($query) {
+                $query->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian');
+                })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kasubbag Umum dan Kepegawaian');
+                    })
+                    ->orWhereHas('jabatan', function ($query) {
+                        $query->where('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                    });
+            })
+            ->first();
 
         $sekda = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
             $query->where('name', 'Sekretaris Daerah');
-        })->first();
-
-        $kepalaBadan = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kepala Badan');
-        })->first();
-
-        $inspektur = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Inspektur');
-        })->first();
-
-        $camat = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Camat');
-        })->first();
-
-        $direktur = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Direktur');
-        })->first();
-
-        $kasubag = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kasubag Umum dan Kepegawaian');
-        })->first();
-
-        $kasubagTu = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
-        })->first();
-
-        $kepalaSatuan = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
-            $query->where('name', 'Kepala Satuan');
         })->first();
 
         $asisten1 = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
@@ -1013,15 +1021,9 @@ class ReportController extends Controller
             'sickData' => $sickData,
             'leaveData' => $leaveData,
             'tbData' => $tugasData,
-            'kepalaDinas' => $kepalaDinas,
+            'kepala' => $kepala,
             'sekda' => $sekda,
-            'kepalaBadan' => $kepalaBadan,
-            'inspektur' => $inspektur,
-            'camat' => $camat,
-            'kasubagTu' => $kasubagTu,
-            'direktur' => $direktur,
             'kasubag' => $kasubag,
-            'kepalaSatuan' => $kepalaSatuan,
             'asisten1' => $asisten1,
             'asisten2' => $asisten2,
             'asisten3' => $asisten3

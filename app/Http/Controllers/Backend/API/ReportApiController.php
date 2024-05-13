@@ -43,7 +43,15 @@ class ReportApiController extends Controller
                 $query->where('name', 'Eselon II B');
             })->exists();
 
+            $isAjudan = $opd->users()->whereHas('eselon', function ($query) {
+                $query->where('name', 'Eselon II C');
+            });
+
             if ($isKepalaDinas) {
+                $absensi += 1;
+            }
+
+            if ($isAjudan) {
                 $absensi += 1;
             }
 
@@ -95,12 +103,13 @@ class ReportApiController extends Controller
                 ->get()
                 ->map(function ($user) {
                     // Periksa apakah properti 'eselon' tersedia dan bukan null sebelum mengakses properti 'name'
-                    if ($user->eselon && $user->eselon->name === 'Eselon II B' && $user->absensi->isEmpty()) {
+                    if ($user->eselon && ($user->eselon->name === 'Eselon II B' || $user->eselon->name === 'Ajudan') && $user->absensi->isEmpty()) {
                         return [
                             'name' => $user->name,
-                            'keterangan' => '-',
+                            'keterangan' => '★',
                         ];
                     }
+
                     // Jika ada data absensi, map setiap absensi ke dalam format yang diinginkan
                     return $user->absensi->map(function ($absensi) use ($user) {
                         $keterangan = $this->getKeterangan($absensi->jam_masuk);
@@ -217,7 +226,7 @@ class ReportApiController extends Controller
 
     private function getKeterangan($jamMasuk)
     {
-        $jamMasukThreshold = Carbon::parse('08:30'); // Sesuaikan ambang batas yang dibutuhkan
+        $jamMasukThreshold = Carbon::parse('07:30'); // Sesuaikan ambang batas yang dibutuhkan
 
         return Carbon::parse($jamMasuk)->gt($jamMasukThreshold) ? 'TELAT' : 'HADIR';
     }
@@ -276,9 +285,16 @@ class ReportApiController extends Controller
                     ->whereDate('tanggal_selesai', '>=', $date)
                     ->exists();
 
-                $attendanceData[$date] = $isNationalHoliday
+                if ($selectedUser->eselon && ($selectedUser->eselon->name === 'Eselon II B' || $selectedUser->eselon->name === 'Eselon II A' || $selectedUser->eselon->name === 'Ajudan') && Carbon::parse($tanggalMulai)->lte(Carbon::parse($date)) && Carbon::parse($date)->lte(Carbon::parse($tanggalSelesai))) {
+                    $attendanceData[$date] = ['jam_masuk' => '*', 'jam_keluar' => '*'];
+                } else {
+                    // Logika standar
+                    // $attendanceData[$date] = $isNationalHoliday ? ['jam_masuk' => 'Libur Nasional', 'jam_keluar' => 'Libur Nasional'] : ['jam_masuk' => optional($userAttendance)->jam_masuk ?? '*', 'jam_keluar' => optional($userAttendance)->jam_keluar ?? '*'];
+                    
+                    $attendanceData[$date] = $isNationalHoliday
                     ? ['jam_masuk' => 'Libur Nasional', 'jam_keluar' => 'Libur Nasional']
                     : ['jam_masuk' => optional($userAttendance)->jam_masuk ?? 'Tanpa Keterangan', 'jam_keluar' => optional($userAttendance)->jam_keluar ?? 'Tanpa Keterangan'];
+                }
 
                 $dutyData[$date] = $hasDuty ? 'Dinas' : 'Tanpa Keterangan';
                 $sickData[$date] = $hasSick ? 'Sakit' : 'Tanpa Keterangan';

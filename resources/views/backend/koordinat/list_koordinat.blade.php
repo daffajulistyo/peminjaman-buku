@@ -55,6 +55,7 @@
                                 <th>Alamat</th>
                                 <th>Latitude</th>
                                 <th>Longitude</th>
+                                <th>Kecamatan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -66,6 +67,7 @@
                                     <td>{{ $lokasi->alamat }} </td>
                                     <td>{{ $lokasi->latitude }} </td>
                                     <td>{{ $lokasi->longitude }} </td>
+                                    <td>{{ $lokasi->kecamatan ?? '-' }} </td>
 
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Basic example">
@@ -132,6 +134,19 @@
                                                     </div>
 
                                                     <div class="form-group">
+                                                        <label for="text">Kecamatan</label>
+                                                        <input type="text" step="any" name="kecamatan"
+                                                            value="{{ $lokasi->kecamatan }}"
+                                                            class="form-control @error('title') is-invalid @enderror"
+                                                            id="text" placeholder="Masukan Kecamatan">
+
+                                                        @error('kecamatan')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="form-group">
                                                         <label for="text">Latitude</label>
                                                         <input type="number" step="any" name="latitude"
                                                             value="{{ $lokasi->latitude }}"
@@ -171,7 +186,7 @@
                             @endforeach
 
                         </tbody>
-
+                        Urutan tabel setelah di kelompokkan menjadi 10 kelompok,
                     </table>
                     <div class="pagination justify-content-center mt-2">
                         {{ $koordinat->links() }}
@@ -227,6 +242,18 @@
                                 placeholder="Masukkan Alamat"> --}}
                             <textarea class="form-control" name="alamat" rows="3" placeholder="Masukkan Alamat" required></textarea>
                             @error('alamat')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="text">Kecamatan</label>
+                            <input type="text" step="any" name="kecamatan"
+                                class="form-control @error('title') is-invalid @enderror" id="text"
+                                placeholder="Masukkan kecamatan">
+
+                            @error('kecamatan')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>

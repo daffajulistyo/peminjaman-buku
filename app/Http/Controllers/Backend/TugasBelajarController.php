@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\TugasBelajar;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TugasBelajarController extends Controller
 {
@@ -13,6 +14,14 @@ class TugasBelajarController extends Controller
     {
 
         $query = TugasBelajar::query();
+
+        if(Auth::user()->role == 1){
+            $query->whereHas('user', function($q){
+                $q->where('opd_id', Auth::user()->opd_id);
+            });
+        } else{
+            $query->where('user_id', Auth::id());
+        }
 
         if ($request->has('nama')) {
             $query->whereHas('user', function ($q) use ($request) {

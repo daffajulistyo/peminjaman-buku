@@ -17,7 +17,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                
+
                 <form role="form" action="{{ route('user.update', ['id' => $user->id]) }}" method="post"
                     enctype="multipart/form-data">
                     @csrf
@@ -64,27 +64,28 @@
                                                     {{ $eselon->name }}</option>
                                             @endforeach
                                         </select>
-                                    
+
                                         @error('eselon_id')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">Role</label>
-                                        <select class="form-control" id="exampleFormControlSelect1" name="role"
+                                        <label for="exampleInputEmail1">Type</label>
+                                        <select class="form-control" id="exampleFormControlSelect1" name="is_manual"
                                             required>
-                                            <option value="" disabled selected>Pilih Role</option>
-                                            @if (Auth::user()->role == 3)
-                                                <option value="1" {{ $user->role == 1 ? 'selected' : '' }}>Admin
-                                                </option>
-                                            @endif
-                                            <option value="2" {{ $user->role == 2 ? 'selected' : '' }}>User
+                                            <option value="0" {{ $user->is_manual == 0 ? 'selected' : '' }}>
+                                                Sistim
+                                            </option>
+
+                                            <option value="1" {{ $user->is_manual == 1 ? 'selected' : '' }}>
+                                                Manual
                                             </option>
                                         </select>
                                     </div>
+
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Akses</label>
                                         <select class="form-control" id="exampleFormControlSelect1" name="akses"
@@ -96,7 +97,6 @@
                                             </option>
                                         </select>
                                     </div>
-
                                 </div>
 
                                 <!-- Continue with other form fields for the left column -->
@@ -180,7 +180,8 @@
                                                 </span>
                                             @enderror
                                         </div>
-                                        <div class="form-group">
+
+                                        {{-- <div class="form-group">
                                             <label for="bidang_id">Bidang</label>
                                             <select name="bidang_id"
                                                 class="form-control select2 @error('bidang_id') is-invalid @enderror"
@@ -200,7 +201,7 @@
                                                     <strong>{{ $message }}</strong>
                                                 </span>
                                             @enderror
-                                        </div>
+                                        </div> --}}
                                         <div class="form-group">
                                             <label for="jabatan_id">Jabatan</label>
                                             <select name="jabatan_id"
@@ -245,8 +246,6 @@
                                             </span>
                                         @enderror
                                     </div>
-
-
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Status</label>
                                         <select class="form-control" id="exampleFormControlSelect1" name="status"
@@ -275,8 +274,37 @@
                                             </span>
                                         @enderror
                                     </div>
+                                    @if (Auth::user()->role == 3)
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Role</label>
+                                            <select class="form-control" id="exampleFormControlSelect1"
+                                                name="role" required>
+                                                <option value="" disabled selected>Pilih Role</option>
+                                                <option value="1" {{ $user->role == 1 ? 'selected' : '' }}>Admin
+                                                </option>
+                                                <option value="2" {{ $user->role == 2 ? 'selected' : '' }}>User
+                                                </option>
+                                            </select>
+                                        </div>
+                                    @else
+                                        <div class="form-group" hidden>
+                                            <label for="exampleInputEmail1">Role</label>
+                                            <select class="form-control" id="exampleFormControlSelect1"
+                                                name="role" required>
+                                                <option value="" disabled selected>Pilih Role</option>
+                                                <option value="1" {{ $user->role == 1 ? 'selected' : '' }}>Admin
+                                                </option>
+                                                <option value="2" {{ $user->role == 2 ? 'selected' : '' }}>User
+                                                </option>
+                                            </select>
+                                        </div>
+                                    @endif
+
+
+
+
                                 </div>
-                
+
                             </div>
 
                             <!-- Continue with other form fields for the right column -->
@@ -294,4 +322,3 @@
         </div>
     </div>
 </div>
-

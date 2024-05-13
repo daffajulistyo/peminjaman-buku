@@ -124,6 +124,7 @@ class UserController extends \App\Http\Controllers\Controller
             'pangkat_id' => 'nullable',
             'akses' => 'required',
             'eselon_id' => 'nullable',
+            'is_manual' => 'nullable',
         ]);
 
         $user->name = $validatedData['name'];
@@ -136,6 +137,7 @@ class UserController extends \App\Http\Controllers\Controller
         $user->jabatan_id = $validatedData['jabatan_id'];
         $user->pangkat_id = $validatedData['pangkat_id'];
         $user->akses = $validatedData['akses'];
+        $user->is_manual = $validatedData['is_manual'];
 
         // Check if OPD has changed
         if ($user->isDirty('opd_id')) {

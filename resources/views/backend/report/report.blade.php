@@ -347,8 +347,9 @@
                                                         }
 
                                                     @endphp
-                                                <tr style="background-color: {{ ($user->status === 'PNS' || $user->status === 'PPPK') ? '#f4f4f9' : '#FFFFFF' }};">
-                                                    <td class="rata-tengah">{{ $no++ }}</td>
+                                                    <tr
+                                                        style="background-color: {{ $user->status === 'PNS' || $user->status === 'PPPK' ? '#f4f4f9' : '#FFFFFF' }};">
+                                                        <td class="rata-tengah">{{ $no++ }}</td>
                                                         <td class="name-nowrap">{{ $user->name }}</td>
                                                         <td class="rata-tengah">{{ $user->nip }}</td>
                                                         <td class="rata-tengah">
@@ -374,7 +375,7 @@
                                         <tr>
                                             <td style="text-align: center; padding-right: 15%;">DIKETAHUI OLEH</td>
                                             <td style="text-align: center; padding-left: 20%;">
-                                                Lubuk Sikaping, &emsp;&emsp;
+                                                {{ $koordinat->kecamatan }}, &emsp;&emsp;
                                                 @php
                                                     $carbonDate = \Carbon\Carbon::parse(request('bulan'));
                                                 @endphp
@@ -387,20 +388,11 @@
                                         </tr>
                                         <tr>
                                             <td style="text-align: center; padding-right: 15%; ">
-                                                @if ($kepalaDinas)
-                                                    KEPALA DINAS<br>
-                                                @elseif ($kepalaBadan)
-                                                    KEPALA BADAN<br>
+                                                @if ($kepala)
+                                                    {{ strtoupper($kepala->jabatan->name) }}
+                                                    <br>
                                                 @elseif ($sekda)
                                                     SEKRETARIS DAERAH<br>
-                                                @elseif ($inspektur)
-                                                    INSPEKTUR<br>
-                                                @elseif ($camat)
-                                                    CAMAT<br>
-                                                @elseif ($direktur)
-                                                    DIREKTUR<br>
-                                                @elseif ($kepalaSatuan)
-                                                    KEPALA SATUAN<br>
                                                 @elseif ($asisten1)
                                                     ASISTEN PEMERINTAHAN<br>
                                                 @elseif ($asisten2)
@@ -412,11 +404,8 @@
                                                 @endif
                                             </td>
                                             <td style="text-align: center; padding-left: 20%;">
-                                                @if ($kasubagTu)
-                                                    KASUBBAG TU PIMPINAN, STAF AHLI<br>DAN KEPEGAWAIAN
-                                                @else
-                                                    KASUBAG UMUM DAN KEPEGAWAIAN<br>
-                                                @endif
+                                                {{ strtoupper($kasubag->jabatan->name) }}
+
                                             </td>
                                         </tr>
                                         <tr>
@@ -438,71 +427,40 @@
                                         <tr>
                                             <td style="text-align: center; padding-right: 15%;">
                                                 <strong><u>
-                                                        {{ $kepalaDinas
-                                                            ? $kepalaDinas->name ?? '-'
-                                                            : ($kepalaBadan
-                                                                ? $kepalaBadan->name ?? '-'
-                                                                : ($asisten1
-                                                                    ? $asisten1->name ?? '-'
-                                                                    : ($asisten2
-                                                                        ? $asisten2->name ?? '-'
-                                                                        : ($asisten3
-                                                                            ? $asisten3->name ?? '-'
-                                                                            : ($sekda
-                                                                                ? $sekda->name ?? '-'
-                                                                                : ($inspektur
-                                                                                    ? $inspektur->name ?? '-'
-                                                                                    : ($camat
-                                                                                        ? $camat->name ?? '-'
-                                                                                        : ($direktur
-                                                                                            ? $direktur->name ?? '-'
-                                                                                            : ($kepalaSatuan
-                                                                                                ? $kepalaSatuan->name ?? '-'
-                                                                                                : '-'))))))))) }}
+                                                        {{ $kepala
+                                                            ? $kepala->name ?? '-'
+                                                            : ($asisten1
+                                                                ? $asisten1->name ?? '-'
+                                                                : ($asisten2
+                                                                    ? $asisten2->name ?? '-'
+                                                                    : ($asisten3
+                                                                        ? $asisten3->name ?? '-'
+                                                                        : ($sekda
+                                                                            ? $sekda->name ?? '-'
+                                                                            : '-')))) }}
                                                     </u></strong><br>
                                                 <strong>NIP.
-                                                    {{ $kepalaDinas
-                                                        ? $kepalaDinas->nip ?? '-'
-                                                        : ($kepalaBadan
-                                                            ? $kepalaBadan->nip ?? '-'
-                                                            : ($sekda
-                                                                ? $sekda->nip ?? '-'
-                                                                : ($asisten1
-                                                                    ? $asisten1->nip ?? '-'
-                                                                    : ($asisten2
-                                                                        ? $asisten2->nip ?? '-'
-                                                                        : ($asisten3
-                                                                            ? $asisten3->nip ?? '-'
-                                                                            : ($inspektur
-                                                                                ? $inspektur->nip ?? '-'
-                                                                                : ($camat
-                                                                                    ? $camat->nip ?? '-'
-                                                                                    : ($direktur
-                                                                                        ? $direktur->nip ?? '-'
-                                                                                        : ($kepalaSatuan
-                                                                                            ? $kepalaSatuan->nip ?? '-'
-                                                                                            : '-'))))))))) }}
+                                                    {{ $kepala
+                                                        ? $kepala->nip ?? '-'
+                                                        : ($sekda
+                                                            ? $sekda->nip ?? '-'
+                                                            : ($asisten1
+                                                                ? $asisten1->nip ?? '-'
+                                                                : ($asisten2
+                                                                    ? $asisten2->nip ?? '-'
+                                                                    : ($asisten3
+                                                                        ? $asisten3->nip ?? '-'
+                                                                        : '-')))) }}
                                                 </strong>
                                             </td>
 
 
                                             <td style="text-align: center; padding-left: 20%;">
                                                 <strong><u>
-                                                        @if ($kasubag)
-                                                            {{ $kasubag->name ?? '-' }}
-                                                        @elseif ($kasubagTu)
-                                                            {{ $kasubagTu->name ?? '-' }}
-                                                        @else
-                                                            -
-                                                        @endif
+                                                        {{ $kasubag->name ?? '-' }}
+
                                                     </u></strong><br>
-                                                <strong> NIP.@if ($kasubag)
-                                                        {{ $kasubag->nip ?? '-' }}
-                                                    @elseif ($kasubagTu)
-                                                        {{ $kasubagTu->nip ?? '-' }}
-                                                    @else
-                                                        -
-                                                    @endif
+                                                <strong> NIP.{{ $kasubag->nip ?? '-' }}
                                                 </strong>
                                             </td>
                                         </tr>
