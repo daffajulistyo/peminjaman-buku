@@ -10,7 +10,7 @@ class Koordinat extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['alamat','kecamatan','latitude','longitude','opd_id'];
+    protected $fillable = ['alamat','kecamatan','radius','latitude','longitude','opd_id'];
 
     public function opd()
     {

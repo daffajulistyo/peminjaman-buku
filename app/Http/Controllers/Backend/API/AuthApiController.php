@@ -173,6 +173,7 @@ class AuthApiController extends Controller
                 $userData['opd']['koordinat'][] = [
                     'latitude' => $koordinat->latitude,
                     'longitude' => $koordinat->longitude,
+                    'radius' => $koordinat->radius,
                 ];
             }
 

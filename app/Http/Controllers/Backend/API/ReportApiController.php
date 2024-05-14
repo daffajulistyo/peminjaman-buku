@@ -286,11 +286,10 @@ class ReportApiController extends Controller
                     ->exists();
 
                 if ($selectedUser->eselon && ($selectedUser->eselon->name === 'Eselon II B' || $selectedUser->eselon->name === 'Eselon II A' || $selectedUser->eselon->name === 'Ajudan') && Carbon::parse($tanggalMulai)->lte(Carbon::parse($date)) && Carbon::parse($date)->lte(Carbon::parse($tanggalSelesai))) {
-                    $attendanceData[$date] = ['jam_masuk' => '*', 'jam_keluar' => '*'];
+                    $attendanceData[$date] = $isNationalHoliday
+                    ? ['jam_masuk' => 'Libur Nasional', 'jam_keluar' => 'Libur Nasional']
+                    : ['jam_masuk' => optional($userAttendance)->jam_masuk ?? '★', 'jam_keluar' => optional($userAttendance)->jam_keluar ?? '★'];
                 } else {
-                    // Logika standar
-                    // $attendanceData[$date] = $isNationalHoliday ? ['jam_masuk' => 'Libur Nasional', 'jam_keluar' => 'Libur Nasional'] : ['jam_masuk' => optional($userAttendance)->jam_masuk ?? '*', 'jam_keluar' => optional($userAttendance)->jam_keluar ?? '*'];
-                    
                     $attendanceData[$date] = $isNationalHoliday
                     ? ['jam_masuk' => 'Libur Nasional', 'jam_keluar' => 'Libur Nasional']
                     : ['jam_masuk' => optional($userAttendance)->jam_masuk ?? 'Tanpa Keterangan', 'jam_keluar' => optional($userAttendance)->jam_keluar ?? 'Tanpa Keterangan'];

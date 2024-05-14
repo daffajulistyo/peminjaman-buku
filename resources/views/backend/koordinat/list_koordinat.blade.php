@@ -56,6 +56,7 @@
                                 <th>Latitude</th>
                                 <th>Longitude</th>
                                 <th>Kecamatan</th>
+                                <th>Jarak</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -68,6 +69,7 @@
                                     <td>{{ $lokasi->latitude }} </td>
                                     <td>{{ $lokasi->longitude }} </td>
                                     <td>{{ $lokasi->kecamatan ?? '-' }} </td>
+                                    <td>{{ $lokasi->radius }} M </td>
 
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Basic example">
@@ -85,7 +87,7 @@
                                 </tr>
                                 <div class="modal fade" id="editKoordinatModal{{ $lokasi->id }}" tabindex="-1"
                                     role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
+                                    <div class="modal-dialog modal-lg" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title">Edit Koordinat OPD</h5>
@@ -172,6 +174,19 @@
                                                             </span>
                                                         @enderror
                                                     </div>
+                                                    <div class="form-group">
+                                                        <label for="text">Radius</label>
+                                                        <input type="number" step="any" name="radius"
+                                                            value="{{ $lokasi->radius }}"
+                                                            class="form-control @error('title') is-invalid @enderror"
+                                                            id="text" placeholder="Enter Your text">
+
+                                                        @error('radius')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
                                                 </div>
                                                 <!-- /.card-body -->
                                                 <div class="modal-footer">
@@ -186,7 +201,6 @@
                             @endforeach
 
                         </tbody>
-                        Urutan tabel setelah di kelompokkan menjadi 10 kelompok,
                     </table>
                     <div class="pagination justify-content-center mt-2">
                         {{ $koordinat->links() }}
@@ -201,7 +215,7 @@
 
     <div class="modal fade" id="addKoordinatModal" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Tambah Koordinat OPD</h5>
@@ -271,6 +285,7 @@
                                 </span>
                             @enderror
                         </div>
+                        
                         <div class="form-group">
                             <label for="text">Longitude</label>
                             <input type="number" step="any" name="longitude"
@@ -278,6 +293,18 @@
                                 placeholder="Masukkan Longitude">
 
                             @error('longitude')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="text">Radius</label>
+                            <input type="number" step="any" name="radius"
+                                class="form-control @error('title') is-invalid @enderror" id="text"
+                                placeholder="Masukkan Radius Lokasi Presensi" maxlength="10">
+
+                            @error('radius')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>

@@ -51,6 +51,7 @@ class KoordinatController extends Controller
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'kecamatan' => 'required|string|max:255',
+            'radius' => 'required|numeric',
             'opd_id' => 'nullable|exists:opds,id',
         ]);
 
@@ -67,26 +68,18 @@ class KoordinatController extends Controller
         return view('backend.koordinat.show', compact('koordinat'));
     }
 
-    public function edit($id)
-    {
-        $koordinat = Koordinat::find($id);
-        $opds = Opd::all();
-
-        return view('backend.koordinat.edit_koordinat', compact('koordinat', 'opds'));
-    }
-
     public function update(Request $request, $id)
     {
         $koordinat = Koordinat::find($id);
         $koordinat->update($request->all());
-        return redirect()->route('koordinat.index')->with('success', 'Koordinat updated successfully!');
+        return redirect()->route('koordinat.index')->with('success', 'Koordinat Berhasil Diperbarui');
     }
 
     public function destroy($id)
     {
         $koordinat = Koordinat::find($id);
         $koordinat->delete();
-        return redirect()->route('koordinat.index')->with('success', 'Koordinat deleted successfully!');
+        return redirect()->route('koordinat.index')->with('success', 'Koordinat Berhasil Dihapus');
     }
 
     public function pickLocation()
@@ -99,9 +92,8 @@ class KoordinatController extends Controller
         $user = Auth::user();
 
         if ($user) {
-            $latitude = $user->opd->koordinat->latitude; // Akses latitude melalui relasi
-            $longitude = $user->opd->koordinat->longitude; // Akses longitude melalui relasi
-
+            $latitude = $user->opd->koordinat->latitude;
+            $longitude = $user->opd->koordinat->longitude;
         }
     }
 
