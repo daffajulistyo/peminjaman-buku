@@ -181,7 +181,7 @@
                                             @enderror
                                         </div>
 
-                                        {{-- <div class="form-group">
+                                        <div class="form-group" hidden>
                                             <label for="bidang_id">Bidang</label>
                                             <select name="bidang_id"
                                                 class="form-control select2 @error('bidang_id') is-invalid @enderror"
@@ -201,7 +201,7 @@
                                                     <strong>{{ $message }}</strong>
                                                 </span>
                                             @enderror
-                                        </div> --}}
+                                        </div>
                                         <div class="form-group">
                                             <label for="jabatan_id">Jabatan</label>
                                             <select name="jabatan_id"

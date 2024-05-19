@@ -8,6 +8,7 @@ use App\Models\AktifKoordinat;
 use App\Models\Izin;
 use App\Models\Dinas;
 use App\Models\Cuti;
+use App\Models\User;
 use App\Models\Sakit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -105,14 +106,19 @@ class AbsensiApiController extends Controller
             return response()->json(['message' => 'Anda sudah melakukan absen masuk hari ini']);
         }
 
+        $pegawai = User::find($user);
 
         // Jika belum ada izin atau absen masuk untuk pengguna pada tanggal yang sama, simpan absen masuk
         $jamMasuk = Carbon::now('Asia/Jakarta');
         $absensi = new Absensi([
             'user_id' => $user,
+            'opd_id' => $pegawai->opd_id,
+            'jabatan_id' => $pegawai->jabatan_id,
             'tanggal' => $tanggal,
             'jam_masuk' => $jamMasuk->toTimeString(),
         ]);
+        // Jika belum ada izin atau absen masuk untuk pengguna pada tanggal yang sama, simpan absen masuk
+
         $absensi->save();
 
         return response()->json(['message' => 'Absensi berhasil disimpan']);
@@ -122,32 +128,53 @@ class AbsensiApiController extends Controller
     {
         $user = $request->input('user_id');
         $jamKeluar = Carbon::now('Asia/Jakarta')->toTimeString();
+        $tanggalSekarang = Carbon::now('Asia/Jakarta')->toDateString();
+        $tanggalKemarin = Carbon::yesterday('Asia/Jakarta')->toDateString();
 
-        // Cari absen masuk yang sesuai dengan pengguna dan tanggal
-        $absenMasuk = Absensi::where('user_id', $user)
-            ->where('tanggal', Carbon::now('Asia/Jakarta')->toDateString())
-            ->first();
+        $isPiket = User::find($user)->is_piket;
 
-        if ($absenMasuk) {
-            // Perbarui absen masuk dengan informasi absen keluar
-            $absenMasuk->jam_keluar = $jamKeluar;
-            $absenMasuk->save();
+        if ($isPiket == 1) {
+            // Cari absen masuk terakhir untuk petugas piket yang belum memiliki jam keluar, diprioritaskan hari ini, lalu kemarin
+            $absenMasuk = Absensi::where('user_id', $user)
+                ->whereIn('tanggal', [$tanggalSekarang, $tanggalKemarin])
+                ->orderBy('tanggal', 'desc')
+                ->orderBy('jam_masuk', 'desc')
+                ->first();
 
-            return response()->json(['message' => 'Absen keluar berhasil disimpan']);
+            if ($absenMasuk) {
+                if ($absenMasuk->jam_keluar === null) {
+                    // Perbarui absen masuk dengan informasi absen keluar jika jam_keluar adalah null
+                    $absenMasuk->jam_keluar = $jamKeluar;
+                    $absenMasuk->save();
+
+                    return response()->json(['message' => 'Absen keluar berhasil disimpan']);
+                } else {
+                    // Buat absen keluar baru dengan tanggal hari ini jika jam_keluar tidak null
+                    $absenMasuk->jam_keluar = $jamKeluar;
+                    $absenMasuk->save();
+
+                    return response()->json(['message' => 'Absen keluar baru Piket berhasil disimpan']);
+                }
+            } else {
+                return response()->json(['error_type' => 'no_absen_masuk', 'message' => 'Silahkan lakukan absensi masuk piket terlebih dahulu'], 400);
+            }
         } else {
-            // Jika tidak ada absen masuk yang sesuai, tambahkan data absen keluar baru
-            $jamMasuk = null; // Sesuaikan dengan cara Anda menyimpan data jam masuk
-            $absenKeluar = new Absensi([
-                'user_id' => $user,
-                'tanggal' => Carbon::now('Asia/Jakarta')->toDateString(),
-                'jam_masuk' => $jamMasuk,
-                'jam_keluar' => $jamKeluar,
-            ]);
-            $absenKeluar->save();
+            $absenMasuk = Absensi::where('user_id', $user)
+                ->where('tanggal', $tanggalSekarang)
+                ->first();
 
-            return response()->json(['message' => 'Absen keluar berhasil disimpan']);
+            if ($absenMasuk) {
+                // Perbarui absen masuk dengan informasi absen keluar
+                $absenMasuk->jam_keluar = $jamKeluar;
+                $absenMasuk->save();
+
+                return response()->json(['message' => 'Absen keluar berhasil disimpan']);
+            } else {
+                return response()->json(['message' => 'Silahkan lakukan absensi masuk terlebih dahulu'], 400);
+            }
         }
     }
+
 
     public function koordinatTambahan(Request $request)
     {
@@ -173,7 +200,7 @@ class AbsensiApiController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Data Koordinat Gagal Ditampilkan',
-                'latitude' => 1.2488342315929606, 
+                'latitude' => 1.2488342315929606,
                 'longitude' => 103.83065892464833,
             ]);
         }
