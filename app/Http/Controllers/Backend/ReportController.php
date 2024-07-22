@@ -9,8 +9,8 @@ use App\Models\User;
 use App\Models\Dinas;
 use App\Models\Sakit;
 use App\Models\Absensi;
-use App\Models\TugasBelajar;
 use App\Models\Koordinat;
+use App\Models\TugasBelajar;
 use Illuminate\Http\Request;
 use App\Models\LiburNasional;
 use Illuminate\Support\Carbon;
@@ -53,50 +53,98 @@ class ReportController extends Controller
         $selectedOpdId = $request->input('opd');
         $opd = Opd::find($selectedOpdId);
 
-        $kepala = User::where('opd_id', $request->input('opd'))
-            ->where(function ($query) {
-                $query->whereHas('jabatan', function ($query) {
-                    $query->where('name', 'Kepala Dinas');
-                })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kepala Puskesmas');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Inspektur');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Camat');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Direktur');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kepala Satuan');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kepala Badan');
-                    });
-            })
-            ->first();
+        if ($opd && $opd->name === 'Penjaga Pintu Air') {
+            $opd_ppu = Opd::where('name', 'Dinas Pekerjaan Umum dan Penataan Ruang')->first();
 
-        $kasubag = User::where('opd_id', $request->input('opd'))
-            ->where(function ($query) {
-                $query->whereHas('jabatan', function ($query) {
-                    $query->where('name', 'Kasubag Umum dan Kepegawaian');
-                })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kasubbag Umum dan Kepegawaian');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
-                    });
-            })
-            ->first();
+            $kepala = User::where('opd_id', $opd_ppu->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas')
+                        ->orWhere('name', 'Kepala Puskesmas')
+                        ->orWhere('name', 'Inspektur')
+                        ->orWhere('name', 'Camat')
+                        ->orWhere('name', 'Direktur')
+                        ->orWhere('name', 'Kepala Satpol PP dan Damkar')
+                        ->orWhere('name', 'Kepala Satuan')
+                        ->orWhere('name', 'Kepala Badan');
+                })->first();
+
+            $kasubag = User::where('opd_id', $opd_ppu->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Tata Usaha')
+                        ->orWhere('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                })->first();
+        } elseif ($opd && $opd->name === 'Penyuluh Pertanian') {
+            $opd_pt = Opd::where('name', 'Dinas Pertanian')->first();
+
+            $kepala = User::where('opd_id', $opd_pt->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas')
+                        ->orWhere('name', 'Kepala Puskesmas')
+                        ->orWhere('name', 'Inspektur')
+                        ->orWhere('name', 'Camat')
+                        ->orWhere('name', 'Direktur')
+                        ->orWhere('name', 'Kepala Satpol PP dan Damkar')
+                        ->orWhere('name', 'Kepala Satuan')
+                        ->orWhere('name', 'Kepala Badan');
+                })->first();
+
+            $kasubag = User::where('opd_id', $opd_pt->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Tata Usaha')
+                        ->orWhere('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                })->first();
+        } elseif ($opd && $opd->name === 'Penyuluh Perikanan') {
+            $opd_pp = Opd::where('name', 'Dinas Perikanan Dan Pangan')->first();
+
+            $kepala = User::where('opd_id', $opd_pp->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas')
+                        ->orWhere('name', 'Kepala Puskesmas')
+                        ->orWhere('name', 'Inspektur')
+                        ->orWhere('name', 'Camat')
+                        ->orWhere('name', 'Direktur')
+                        ->orWhere('name', 'Kepala Satpol PP dan Damkar')
+                        ->orWhere('name', 'Kepala Satuan')
+                        ->orWhere('name', 'Kepala Badan');
+                })->first();
+
+            $kasubag = User::where('opd_id', $opd_pp->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Tata Usaha')
+                        ->orWhere('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                })->first();
+        } else {
+
+            $kepala = User::where('opd_id', $request->input('opd'))
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas')
+                        ->orWhere('name', 'Kepala Puskesmas')
+                        ->orWhere('name', 'Inspektur')
+                        ->orWhere('name', 'Camat')
+                        ->orWhere('name', 'Direktur')
+                        ->orWhere('name', 'Kepala Satpol PP dan Damkar')
+                        ->orWhere('name', 'Kepala Satuan')
+                        ->orWhere('name', 'Kepala Badan');
+                })->first();
+
+            $kasubag = User::where('opd_id', $request->input('opd'))
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Tata Usaha')
+                        ->orWhere('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                })->first();
+        }
 
         $sekda = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
             $query->where('name', 'Sekretaris Daerah');
         })->first();
-
         $asisten1 = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
             $query->where('name', 'ASISTEN PEMERINTAHAN');
         })->first();
@@ -487,7 +535,10 @@ class ReportController extends Controller
         $selectedOpdId = $request->input('opd');
         $opd = Opd::find($selectedOpdId);
         $koordinat = Koordinat::where('opd_id', $selectedOpdId)->first();
-        $users = User::where('opd_id', $selectedOpdId)->orderByRaw('eselon_id IS NULL, eselon_id, pangkat_id IS NULL, pangkat_id, status = "PNS" DESC, status')->get();
+        $users = User::whereHas('absensi', function ($query) use ($selectedOpdId) {
+            $query->where('opd_id', $selectedOpdId);
+        })->orderByRaw('eselon_id IS NULL, eselon_id, pangkat_id IS NULL, pangkat_id, status = "PNS" DESC, status')->get();
+
 
         $selectedWeek = Carbon::parse($request->input('week'));
         $weekStartDate = $selectedWeek->startOfWeek()->format('Y-m-d');
@@ -497,11 +548,11 @@ class ReportController extends Controller
         $dates = [];
         $currentDate = Carbon::parse($weekStartDate);
 
+        $isPuskesmas = $opd && stripos($opd->name, 'puskesmas') !== false;
+
         while ($currentDate->lte(Carbon::parse($weekEndDate))) {
-            // Only include dates from Monday to Friday
-            if ($currentDate->dayOfWeek >= Carbon::MONDAY && $currentDate->dayOfWeek <= Carbon::FRIDAY) {
-                $dates[] = $currentDate->format('Y-m-d');
-            }
+            $dates[] = $currentDate->format('Y-m-d');
+
             $currentDate->addDay();
         }
 
@@ -670,45 +721,94 @@ class ReportController extends Controller
         $endOfWeek = $selectedWeek->endOfWeek()->isoFormat('LL');
         $weekNumber = $selectedWeek->isoFormat('W');
 
-        $kepala = User::where('opd_id', $request->input('opd'))
-            ->where(function ($query) {
-                $query->whereHas('jabatan', function ($query) {
-                    $query->where('name', 'Kepala Dinas');
-                })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kepala Puskesmas');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Inspektur');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Camat');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Direktur');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kepala Satuan');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kepala Badan');
-                    });
-            })
-            ->first();
+        if ($opd && $opd->name === 'Penjaga Pintu Air') {
+            $opd_ppu = Opd::where('name', 'Dinas Pekerjaan Umum dan Penataan Ruang')->first();
 
-        $kasubag = User::where('opd_id', $request->input('opd'))
-            ->where(function ($query) {
-                $query->whereHas('jabatan', function ($query) {
-                    $query->where('name', 'Kasubag Umum dan Kepegawaian');
-                })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kasubbag Umum dan Kepegawaian');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
-                    });
-            })
-            ->first();
+            $kepala = User::where('opd_id', $opd_ppu->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas')
+                        ->orWhere('name', 'Kepala Puskesmas')
+                        ->orWhere('name', 'Inspektur')
+                        ->orWhere('name', 'Camat')
+                        ->orWhere('name', 'Direktur')
+                        ->orWhere('name', 'Kepala Satpol PP dan Damkar')
+                        ->orWhere('name', 'Kepala Satuan')
+                        ->orWhere('name', 'Kepala Badan');
+                })->first();
+
+            $kasubag = User::where('opd_id', $opd_ppu->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Tata Usaha')
+                        ->orWhere('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                })->first();
+        } elseif ($opd && $opd->name === 'Penyuluh Pertanian') {
+            $opd_pt = Opd::where('name', 'Dinas Pertanian')->first();
+
+            $kepala = User::where('opd_id', $opd_pt->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas')
+                        ->orWhere('name', 'Kepala Puskesmas')
+                        ->orWhere('name', 'Inspektur')
+                        ->orWhere('name', 'Camat')
+                        ->orWhere('name', 'Direktur')
+                        ->orWhere('name', 'Kepala Satpol PP dan Damkar')
+                        ->orWhere('name', 'Kepala Satuan')
+                        ->orWhere('name', 'Kepala Badan');
+                })->first();
+
+            $kasubag = User::where('opd_id', $opd_pt->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Tata Usaha')
+                        ->orWhere('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                })->first();
+        } elseif ($opd && $opd->name === 'Penyuluh Perikanan') {
+            $opd_pp = Opd::where('name', 'Dinas Perikanan Dan Pangan')->first();
+
+            $kepala = User::where('opd_id', $opd_pp->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas')
+                        ->orWhere('name', 'Kepala Puskesmas')
+                        ->orWhere('name', 'Inspektur')
+                        ->orWhere('name', 'Camat')
+                        ->orWhere('name', 'Direktur')
+                        ->orWhere('name', 'Kepala Satpol PP dan Damkar')
+                        ->orWhere('name', 'Kepala Satuan')
+                        ->orWhere('name', 'Kepala Badan');
+                })->first();
+
+            $kasubag = User::where('opd_id', $opd_pp->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Tata Usaha')
+                        ->orWhere('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                })->first();
+        } else {
+
+            $kepala = User::where('opd_id', $request->input('opd'))
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas')
+                        ->orWhere('name', 'Kepala Puskesmas')
+                        ->orWhere('name', 'Inspektur')
+                        ->orWhere('name', 'Camat')
+                        ->orWhere('name', 'Direktur')
+                        ->orWhere('name', 'Kepala Satpol PP dan Damkar')
+                        ->orWhere('name', 'Kepala Satuan')
+                        ->orWhere('name', 'Kepala Badan');
+                })->first();
+
+            $kasubag = User::where('opd_id', $request->input('opd'))
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Tata Usaha')
+                        ->orWhere('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                })->first();
+        }
 
         $sekda = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
             $query->where('name', 'Sekretaris Daerah');
@@ -735,10 +835,10 @@ class ReportController extends Controller
             'dates' => $dates,
             'attendanceData' => $attendanceData,
             'dutyData' => $dutyData,
+            'tbData' => $tugasData,
             'permissionData' => $permissionData,
             'sickData' => $sickData,
             'leaveData' => $leaveData,
-            'tbData' => $tugasData,
             'weekNumber' => $weekNumber,
             'startOfWeek' => $startOfWeek,
             'endOfWeek' => $endOfWeek,
@@ -759,31 +859,28 @@ class ReportController extends Controller
         $opd = Opd::find($selectedOpdId);
         $koordinat = Koordinat::where('opd_id', $selectedOpdId)->first();
         // $users = User::where('opd_id', $selectedOpdId)->orderByRaw('eselon_id IS NULL, eselon_id, pangkat_id IS NULL, pangkat_id, status = "PNS" DESC, status')->get();
+        // $users = User::where('opd_id', $selectedOpdId)->get();
+
+        // Ambil semua user yang terkait dengan opd_id dari model Absensi
+        $users = User::whereHas('absensi', function ($query) use ($selectedOpdId) {
+            $query->where('opd_id', $selectedOpdId);
+        })->get();
+
 
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $users = User::where('opd_id', $selectedOpdId)
-            ->orderByRaw('eselon_id IS NULL, eselon_id, pangkat_id IS NULL, pangkat_id, status = "PNS" DESC, status')
-            ->get();
-
-        // // Mendapatkan daftar pengguna yang telah berpindah OPD dalam rentang tanggal yang dipilih
-        // $usersChangedOpd = User::whereIn('id', function ($query) use ($selectedOpdId, $startDate, $endDate) {
-        //     $query->select('user_id')
-        //         ->from('opd_changes')
-        //         ->where('new_opd_id', $selectedOpdId)
-        //         ->whereBetween('tanggal_pindah', [$startDate, $endDate]);
-        // })->get();
-
-        // // Menggabungkan daftar pengguna yang telah berpindah OPD ke daftar pengguna OPD yang dipilih
-        // $users = $users->merge($usersChangedOpd);
-
         $dates = [];
         $currentDate = Carbon::parse($startDate);
+        $isPuskesmas = $opd && stripos($opd->name, 'puskesmas') !== false;
+
 
         while ($currentDate->lte(Carbon::parse($endDate))) {
             // Only include dates from Monday to Friday
-            if ($currentDate->dayOfWeek >= Carbon::MONDAY && $currentDate->dayOfWeek <= Carbon::FRIDAY) {
+            if (
+                $currentDate->dayOfWeek >= Carbon::MONDAY &&
+                ($currentDate->dayOfWeek <= Carbon::FRIDAY || ($isPuskesmas && $currentDate->dayOfWeek == Carbon::SATURDAY))
+            ) {
                 $dates[] = $currentDate->format('Y-m-d');
             }
             $currentDate->addDay();
@@ -950,49 +1047,99 @@ class ReportController extends Controller
             }
         }
 
-        $kepala = User::where('opd_id', $request->input('opd'))
-            ->where(function ($query) {
-                $query->whereHas('jabatan', function ($query) {
-                    $query->where('name', 'Kepala Dinas');
-                })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kepala Puskesmas');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Inspektur');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Camat');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Direktur');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kepala Satuan');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kepala Badan');
-                    });
-            })
-            ->first();
+        if ($opd && $opd->name === 'Penjaga Pintu Air') {
+            $opd_ppu = Opd::where('name', 'Dinas Pekerjaan Umum dan Penataan Ruang')->first();
 
-        $kasubag = User::where('opd_id', $request->input('opd'))
-            ->where(function ($query) {
-                $query->whereHas('jabatan', function ($query) {
-                    $query->where('name', 'Kasubag Umum dan Kepegawaian');
-                })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kasubbag Umum dan Kepegawaian');
-                    })
-                    ->orWhereHas('jabatan', function ($query) {
-                        $query->where('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
-                    });
-            })
-            ->first();
+            $kepala = User::where('opd_id', $opd_ppu->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas')
+                        ->orWhere('name', 'Kepala Puskesmas')
+                        ->orWhere('name', 'Inspektur')
+                        ->orWhere('name', 'Camat')
+                        ->orWhere('name', 'Direktur')
+                        ->orWhere('name', 'Kepala Satpol PP dan Damkar')
+                        ->orWhere('name', 'Kepala Satuan')
+                        ->orWhere('name', 'Kepala Badan');
+                })->first();
+
+            $kasubag = User::where('opd_id', $opd_ppu->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Tata Usaha')
+                        ->orWhere('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                })->first();
+        } elseif ($opd && $opd->name === 'Penyuluh Pertanian') {
+            $opd_pt = Opd::where('name', 'Dinas Pertanian')->first();
+
+            $kepala = User::where('opd_id', $opd_pt->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas')
+                        ->orWhere('name', 'Kepala Puskesmas')
+                        ->orWhere('name', 'Inspektur')
+                        ->orWhere('name', 'Camat')
+                        ->orWhere('name', 'Direktur')
+                        ->orWhere('name', 'Kepala Satpol PP dan Damkar')
+                        ->orWhere('name', 'Kepala Satuan')
+                        ->orWhere('name', 'Kepala Badan');
+                })->first();
+
+            $kasubag = User::where('opd_id', $opd_pt->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Tata Usaha')
+                        ->orWhere('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                })->first();
+        } elseif ($opd && $opd->name === 'Penyuluh Perikanan') {
+            $opd_pp = Opd::where('name', 'Dinas Perikanan Dan Pangan')->first();
+
+            $kepala = User::where('opd_id', $opd_pp->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas')
+                        ->orWhere('name', 'Kepala Puskesmas')
+                        ->orWhere('name', 'Inspektur')
+                        ->orWhere('name', 'Camat')
+                        ->orWhere('name', 'Direktur')
+                        ->orWhere('name', 'Kepala Satpol PP dan Damkar')
+                        ->orWhere('name', 'Kepala Satuan')
+                        ->orWhere('name', 'Kepala Badan');
+                })->first();
+
+            $kasubag = User::where('opd_id', $opd_pp->id)
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Tata Usaha')
+                        ->orWhere('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                })->first();
+        } else {
+
+            $kepala = User::where('opd_id', $request->input('opd'))
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kepala Dinas')
+                        ->orWhere('name', 'Kepala Puskesmas')
+                        ->orWhere('name', 'Inspektur')
+                        ->orWhere('name', 'Camat')
+                        ->orWhere('name', 'Direktur')
+                        ->orWhere('name', 'Kepala Satpol PP dan Damkar')
+                        ->orWhere('name', 'Kepala Satuan')
+                        ->orWhere('name', 'Kepala Badan');
+                })->first();
+
+            $kasubag = User::where('opd_id', $request->input('opd'))
+                ->whereHas('jabatan', function ($query) {
+                    $query->where('name', 'Kasubag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Umum dan Kepegawaian')
+                        ->orWhere('name', 'Kasubbag Tata Usaha')
+                        ->orWhere('name', 'Kasubbag TU Pimpinan, Staf Ahli dan Kepegawaian');
+                })->first();
+        }
 
         $sekda = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
             $query->where('name', 'Sekretaris Daerah');
         })->first();
+
 
         $asisten1 = User::where('opd_id', $request->input('opd'))->whereHas('jabatan', function ($query) {
             $query->where('name', 'ASISTEN PEMERINTAHAN');
@@ -1020,9 +1167,9 @@ class ReportController extends Controller
             'permissionData' => $permissionData,
             'sickData' => $sickData,
             'leaveData' => $leaveData,
-            'tbData' => $tugasData,
             'kepala' => $kepala,
             'sekda' => $sekda,
+            'tbData' => $tugasData,
             'kasubag' => $kasubag,
             'asisten1' => $asisten1,
             'asisten2' => $asisten2,

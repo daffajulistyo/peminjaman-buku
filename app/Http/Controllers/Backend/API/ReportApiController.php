@@ -121,6 +121,7 @@ class ReportApiController extends Controller
                 })
                 ->flatten() // Menggabungkan array yang bersarang menjadi satu dimensi
                 ->filter()
+                ->sortBy('jam_masuk')
                 ->values()
                 ->toArray();
 
@@ -235,12 +236,17 @@ class ReportApiController extends Controller
     {
         $tanggalMulai = $request->input('tanggal_mulai');
         $tanggalSelesai = $request->input('tanggal_selesai');
-        $selectedOpdId = $request->input('opd');
-
-        $opd = Opd::find($selectedOpdId);
 
         $selectedUserId = $request->input('user_id');
         $selectedUser = User::find($selectedUserId);
+
+        $nama = $selectedUser ? $selectedUser->name : '';
+        $nip = $selectedUser ? $selectedUser->nip : '';
+        $opd = $selectedUser ? $selectedUser->opd : '';
+        $jabatan = $selectedUser ? $selectedUser->jabatan : '';
+
+        // tampilakn data user namun hanya nem,nip,opd dan jabatn
+
 
         $dates = [];
         $currentDate = Carbon::parse($tanggalMulai);
@@ -303,7 +309,11 @@ class ReportApiController extends Controller
         }
 
         $data = [
+            // tampilkan data user
+            'nama' => $nama,
+            'nip' => $nip,
             'opd' => $opd,
+            'jabatan' => $jabatan,
             'dates' => $dates,
             'attendanceData' => $attendanceData,
             'dutyData' => $dutyData,

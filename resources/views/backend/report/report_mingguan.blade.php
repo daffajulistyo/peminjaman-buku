@@ -57,7 +57,7 @@
         </div>
     </div>
     @if (isset($selectedOpd))
-        <div id="printContent">
+        <div id="printContent" class>
             <div class="row">
                 <div class="col-md-12">
                     <div class="card card-primary">
@@ -79,10 +79,23 @@
                                                     <h3
                                                         style="font-weight: bold; padding-left:50px; padding-right:50px; text-transform: uppercase">
                                                         SEKRETARIAT DAERAH</h3>
+                                                @elseif (strcasecmp($selectedOpd->name, 'Penjaga Pintu Air') == 0)
+                                                    <h3
+                                                        style="font-weight: bold; padding-left:50px; padding-right:50px; text-transform: uppercase">
+                                                        Dinas Pekerjaan Umum dan Penataan Ruang</h3>
+                                                @elseif (strcasecmp($selectedOpd->name, 'Penyuluh Pertanian') == 0)
+                                                    <h3
+                                                        style="font-weight: bold; padding-left:50px; padding-right:50px; text-transform: uppercase">
+                                                        Dinas Pertanian</h3>
+                                                @elseif (strcasecmp($selectedOpd->name, 'Penyuluh Perikanan') == 0)
+                                                    <h3
+                                                        style="font-weight: bold; padding-left:50px; padding-right:50px; text-transform: uppercase">
+                                                        Dinas Perikanan Dan Pangan</h3>
                                                 @else
                                                     <h3
                                                         style="font-weight: bold; padding-left:50px; padding-right:50px; text-transform: uppercase">
-                                                        {{ $selectedOpd->name }}</h3>
+                                                        {{ $selectedOpd->name }}
+                                                    </h3>
                                                 @endif
                                                 @if (isset($koordinat))
                                                     <p>{{ $koordinat->alamat }}</p>
@@ -123,12 +136,15 @@
                                     <table border="1" width="100%">
                                         <thead>
                                             <tr>
+                                                @php
+                                                    $isPuskesmas = stripos($selectedOpd->name, 'puskesmas') !== false;
+                                                @endphp
                                                 <th rowspan="4" class="rata-tengah">No</th>
                                                 <th rowspan="4" class="rata-tengah">Nama</th>
-                                                <th colspan="15" class="rata-tengah">Hari / Tanggal</th>
+                                                <th colspan="21" class="rata-tengah">Hari / Tanggal</th>
+                                                <th rowspan="4" class="rata-tengah">Total Jam</th>
+                                                <th rowspan="4" class="rata-tengah">Rata-Rata</th>
                                             </tr>
-
-
                                             <tr>
                                                 @foreach ($dates as $date)
                                                     <th colspan="3" class="rata-tengah">
@@ -138,31 +154,18 @@
                                             </tr>
                                             <tr>
                                                 @foreach ($dates as $date)
-                                                    <th colspan="3" style="font-size: 12px;" class="rata-tengah">
+                                                    <th colspan="3" style="font-size: 10px;" class="rata-tengah">
                                                         {{ \Carbon\Carbon::parse($date)->locale('id_ID')->translatedFormat('d F Y') }}
                                                     </th>
                                                 @endforeach
                                             </tr>
                                             <tr>
-                                                <th style="font-size: 12px;" class="rata-tengah">Datang</th>
-                                                <th style="font-size: 12px;" class="rata-tengah">Pulang</th>
-                                                <th style="font-size: 12px;" class="rata-tengah">Jam Kerja</th>
-                                                <th style="font-size: 12px;" class="rata-tengah">Datang</th>
-                                                <th style="font-size: 12px;" class="rata-tengah">Pulang</th>
-                                                <th style="font-size: 12px;" class="rata-tengah">Jam Kerja</th>
-                                                <th style="font-size: 12px;" class="rata-tengah">Datang</th>
-                                                <th style="font-size: 12px;" class="rata-tengah">Pulang</th>
-                                                <th style="font-size: 12px;" class="rata-tengah">Jam Kerja</th>
-                                                <th style="font-size: 12px;" class="rata-tengah">Datang</th>
-                                                <th style="font-size: 12px;" class="rata-tengah">Pulang</th>
-                                                <th style="font-size: 12px;" class="rata-tengah">Jam Kerja</th>
-                                                <th style="font-size: 12px;" class="rata-tengah">Datang</th>
-                                                <th style="font-size: 12px;" class="rata-tengah">Pulang</th>
-                                                <th style="font-size: 12px;" class="rata-tengah">Jam Kerja</th>
-
+                                                @foreach ($dates as $date)
+                                                    <th style="font-size: 10px;" class="rata-tengah">Datang</th>
+                                                    <th style="font-size: 10px;" class="rata-tengah">Pulang</th>
+                                                    <th style="font-size: 10px;" class="rata-tengah">Jam Kerja</th>
+                                                @endforeach
                                             </tr>
-
-
                                         </thead>
                                         <tbody>
                                             @php
@@ -177,38 +180,62 @@
 
                                             @foreach ($users as $user)
                                                 @if ($user->role == 2)
-                                                    <tr
-                                                        style="background-color: {{ $user->status === 'PNS' || $user->status === 'PPPK' ? '#f4f4f9' : '#FFFFFF' }};">
+                                                    @php
+                                                        $userTotalDurasiDetik = 0;
+                                                        $userDaysCount = 0;
+                                                    @endphp
 
-                                                        <td class="rata-tengah" style="font-size: 14px;">
+                                                    <tr
+                                                        style="background-color:
+    {{ $user->status === 'PNS' ? '#f4f4f9' : ($user->status === 'PPPK' ? '#deeae8' : ($user->status === 'Penyuluh' ? '#c6edc3' : '#fcf5c7')) }};">
+                                                        <td class="rata-tengah" style="font-size: 10px;">
                                                             {{ $i++ }}</td>
-                                                        <td class="name-nowrap" style="font-size: 14px;">
+                                                        <td class="name-nowrap" style="font-size: 10px;">
                                                             {{ $user->name }}</td>
 
                                                         @foreach ($attendanceData[$user->id] as $key => $attendance)
                                                             @if ($attendance['jam_masuk'] == 'Libur Nasional')
-                                                                <td colspan="3" class="rata-tengah">Libur Nasional
-                                                                </td>
+                                                                <td colspan="3" class="rata-tengah"
+                                                                    style="font-size: small;">Libur Nasional</td>
                                                             @else
                                                                 <?php
+
+                                                                $date = \Carbon\Carbon::parse($key);
+                                                                $dayOfWeek = $date->dayOfWeek;
                                                                 $hasDuty = isset($dutyData[$user->id][$key]) && $dutyData[$user->id][$key] == 'Dinas';
                                                                 $hasPermission = isset($permissionData[$user->id][$key]) && $permissionData[$user->id][$key] == 'Izin';
                                                                 $hasSick = isset($sickData[$user->id][$key]) && $sickData[$user->id][$key] == 'Sakit';
                                                                 $hasLeave = isset($leaveData[$user->id][$key]) && $leaveData[$user->id][$key] == 'Cuti';
                                                                 $hasAttendance = $attendance['jam_masuk'] !== '-' && $attendance['jam_keluar'] !== '-';
                                                                 $hasTugas = isset($tbData[$user->id][$key]) && $tbData[$user->id][$key] == 'TB';
-                                                                
                                                                 $isManual = $user->is_manual == 1;
-                                                                
                                                                 $isEselonII = $user->eselon && ($user->eselon->name === 'Ajudan' || $user->eselon->name === 'Eselon II A' || $user->eselon->name === 'Eselon II B');
                                                                 $jam_masuk = $attendance['jam_masuk'];
                                                                 $jam_keluar = $attendance['jam_keluar'] ?? '-';
                                                                 $durasi_kerja = '-';
-                                                                if ($jam_masuk !== '-' && $jam_keluar !== '-') {
-                                                                    $durasi_detik = strtotime($jam_keluar) - strtotime($jam_masuk) - 3600; // Kurangkan 1 jam
+
+                                                                if ($hasDuty) {
+                                                                    // Jika dinas, tambahkan 8 jam 30 menit (30600 detik)
+                                                                    $durasi_detik = 30600;
+                                                                    $userTotalDurasiDetik += $durasi_detik;
+                                                                    $durasi_kerja = '8 Jam 30 Menit';
+                                                                } elseif ($hasLeave) {
+                                                                    // Jika cuti, tambahkan 5 jam (18000 detik)
+                                                                    $durasi_detik = 18000;
+                                                                    $userTotalDurasiDetik += $durasi_detik;
+                                                                    $durasi_kerja = '5 Jam';
+                                                                } elseif ($jam_masuk !== '-' && $jam_keluar !== '-') {
+                                                                    $isPuskesmas = stripos($selectedOpd->name, 'puskesmas') !== false;
+                                                                    if ($isPuskesmas) {
+                                                                        $durasi_detik = strtotime($jam_keluar) - strtotime($jam_masuk); // Tidak dikurangi 3600 detik (1 jam)
+                                                                    } else {
+                                                                        $durasi_detik = strtotime($jam_keluar) - strtotime($jam_masuk) - 3600; // Dikurangi 3600 detik (1 jam)
+                                                                    } // Kurangkan 1 jam
                                                                     if ($durasi_detik < 0) {
                                                                         $durasi_detik = 0; // Pastikan tidak negatif
                                                                     }
+                                                                    $userTotalDurasiDetik += $durasi_detik; // Tambahkan ke total durasi pengguna
+                                                                    // Tambahkan hitungan hari
                                                                     $jam = floor($durasi_detik / 3600);
                                                                     $menit = floor(($durasi_detik % 3600) / 60);
                                                                     $durasi_kerja = $jam . ' Jam ' . $menit . ' Menit';
@@ -217,71 +244,94 @@
 
                                                                 @if ($hasAttendance)
                                                                     <td class="rata-tengah"
-                                                                        style="font-size: 12px; font-weight: bold; font-style:italic; ">
-                                                                        {{ $attendance['jam_masuk'] }}</td>
-
+                                                                        style="font-size: 10px; font-weight: bold; font-style:italic;">
+                                                                        {{ $attendance['jam_masuk'] == '99:59:59' ? 'Fake GPS' : $attendance['jam_masuk'] }}</td>
                                                                     <td class="rata-tengah"
-                                                                        style="font-size: 12px; font-weight: bold; font-style:italic">
-                                                                        {{ $attendance['jam_keluar'] ?? '-' }}</td>
-
+                                                                        style="font-size: 10px; font-weight: bold; font-style:italic">
+                                                                        {{ $attendance['jam_keluar'] == '99:59:59' ? 'Fake GPS' : $attendance['jam_keluar'] ?? '-' }}</td>
                                                                     <td class="rata-tengah"
-                                                                        style="font-size: 12px; font-weight: bold; font-style:italic">
-                                                                        -</td>
+                                                                        style="font-size: 10px; font-weight: bold; font-style:italic">
+                                                                        {{ $durasi_kerja }}</td>
                                                                 @else
                                                                     @if (!$hasDuty && !$hasPermission && !$hasSick && !$hasLeave && !$hasTugas)
-                                                                        @if ($isEselonII)
-                                                                            <td colspan="3" class="rata-tengah">★
-                                                                            </td>
+                                                                        @if ($dayOfWeek == \Carbon\Carbon::SATURDAY || $dayOfWeek == \Carbon\Carbon::SUNDAY)
+                                                                            <td colspan="3" class="rata-tengah">-</td>
+                                                                        @elseif ($isEselonII)
+                                                                            <td colspan="3" class="rata-tengah">★</td>
                                                                         @elseif ($isManual)
                                                                             <td colspan="3" class="rata-tengah">M</td>
                                                                         @else
-                                                                            <td colspan="3" class="rata-tengah">TK
-                                                                            </td>
+                                                                            <td colspan="3" class="rata-tengah">TK</td>
                                                                             @php
                                                                                 $totalTK++;
                                                                             @endphp
                                                                         @endif
                                                                     @else
                                                                         <td @if ($hasDuty || $hasPermission || $hasSick || $hasLeave || $hasTugas) colspan="3" @endif
-                                                                            class="rata-tengah">
-                                                                            @if ($hasDuty)
-                                                                                Dinas
-                                                                                @php
-                                                                                    $totalDinas++;
-                                                                                @endphp
-                                                                            @elseif ($hasPermission)
-                                                                                Izin
-                                                                                @php
-                                                                                    $totalIzin++;
-                                                                                @endphp
-                                                                            @elseif ($hasSick)
-                                                                                Sakit
-                                                                                @php
-                                                                                    $totalSakit++;
-                                                                                @endphp
-                                                                            @elseif ($hasLeave)
-                                                                                Cuti
-                                                                                @php
-                                                                                    $totalCuti++;
-                                                                                @endphp
-                                                                            @elseif ($hasTugas)
-                                                                                TB
-                                                                                @php
-                                                                                    $totalTb++;
-                                                                                @endphp
+                                                                            class="rata-tengah" style="font-size: small;">
+                                                                            @if ($dayOfWeek == \Carbon\Carbon::SATURDAY || $dayOfWeek == \Carbon\Carbon::SUNDAY)
+                                                                                -
                                                                             @else
-                                                                                {{ $attendance['jam_masuk'] }}
+                                                                                @if ($hasDuty)
+                                                                                    Dinas
+                                                                                    @php
+                                                                                        $totalDinas++;
+                                                                                    @endphp
+                                                                                @elseif ($hasPermission)
+                                                                                    Izin
+                                                                                    @php
+                                                                                        $totalIzin++;
+                                                                                    @endphp
+                                                                                @elseif ($hasSick)
+                                                                                    Sakit
+                                                                                    @php
+                                                                                        $totalSakit++;
+                                                                                    @endphp
+                                                                                @elseif ($hasLeave)
+                                                                                    Cuti
+                                                                                    @php
+                                                                                        $totalCuti++;
+                                                                                    @endphp
+                                                                                @elseif ($hasTugas)
+                                                                                    TB
+                                                                                    @php
+                                                                                        $totalTb++;
+                                                                                    @endphp
+                                                                            @else
+                                                                            {{ $attendance['jam_masuk'] }}
+                                                                            @endif
                                                                             @endif
                                                                         </td>
                                                                     @endif
                                                                 @endif
                                                             @endif
                                                         @endforeach
+
+                                                        <?php
+                                                        // Menghitung total jam dan menit dari total durasi dalam detik
+                                                        $userTotalJam = floor($userTotalDurasiDetik / 3600);
+                                                        $userTotalMenit = floor(($userTotalDurasiDetik % 3600) / 60);
+                                                        // Menghitung rata-rata jam kerja per hari
+                                                        $userAverageJamPerDay = count($dates) > 0 ? floor($userTotalDurasiDetik / count($dates) / 3600) : 0;
+                                                        $userAverageMenitPerDay = count($dates) > 0 ? floor((($userTotalDurasiDetik / count($dates)) % 3600) / 60) : 0;
+                                                        ?>
+
+                                                        @php
+                                                            $starTd = '<td class="rata-tengah">★</td>';
+                                                            $timeTd =
+                                                                '<td class="name-nowrap" style="font-size: 10px; font-weight: bold; font-style:italic;">';
+                                                            $isEselonII = $isEselonII ?? null;
+                                                        @endphp
+
+                                                        {!! $isEselonII ? $starTd : $timeTd . "{$userTotalJam} Jam {$userTotalMenit} Menit</td>" !!}
+
+                                                        {!! $isEselonII ? $starTd : $timeTd . "{$userAverageJamPerDay} Jam {$userAverageMenitPerDay} Menit</td>" !!}
                                                     </tr>
                                                 @endif
                                             @endforeach
                                         </tbody>
                                     </table>
+
                                     <div class="mt-4">
                                         <table border="1" cellspacing="1" cellpadding="2">
                                             <thead>
@@ -357,8 +407,11 @@
                                                 @endif
                                             </td>
                                             <td style="text-align: center; padding-left: 20%;">
-                                                {{ strtoupper($kasubag->jabatan->name) }}
-
+                                                @if ($kasubag)
+                                                    {{ strtoupper($kasubag->jabatan->name) }}
+                                                @else
+                                                    -
+                                                @endif
                                             </td>
                                         </tr>
                                         <tr>
@@ -410,10 +463,17 @@
 
                                             <td style="text-align: center; padding-left: 20%;">
                                                 <strong><u>
-                                                        {{ $kasubag->name ?? '-' }}
-
+                                                        @if ($kasubag)
+                                                            {{ $kasubag->name ?? '-' }}
+                                                        @else
+                                                            -
+                                                        @endif
                                                     </u></strong><br>
-                                                <strong> NIP.{{ $kasubag->nip ?? '-' }}
+                                                <strong> NIP.@if ($kasubag)
+                                                        {{ $kasubag->nip ?? '-' }}
+                                                    @else
+                                                        -
+                                                    @endif
                                                 </strong>
                                             </td>
                                         </tr>

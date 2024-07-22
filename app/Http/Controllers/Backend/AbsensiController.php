@@ -34,10 +34,10 @@ class AbsensiController extends Controller
             $absenQuery->whereHas('user', function ($query) {
                 $query->where('opd_id', Auth::user()->opd_id);
             });
-        }else {
+        } else {
             $absenQuery->where('user_id', Auth::user()->id);
         }
- 
+
         if ($searchName) {
             $absenQuery->whereHas('user', function ($query) use ($searchName) {
                 $query->where('name', 'like', '%' . $searchName . '%');
@@ -97,11 +97,29 @@ class AbsensiController extends Controller
 
     public function simpanAbsen(Request $request)
     {
-        $validatedData = $request->all();
+        // Validasi data yang diterima dari form
+        $validatedData = $request->validate([
+            'opd_id' => 'required|integer',
+            'user_id' => 'required|exists:users,id',
+            'tanggal' => 'required|date',
+            'jam_masuk' => 'required',
+            'jam_keluar' => '', // Jam keluar bisa kosong atau optional
+        ]);
+
+        // Ambil jabatan_id dari user_id yang dipilih
+        $user = User::findOrFail($validatedData['user_id']);
+        $jabatanId = $user->jabatan_id;
+
+        // Tambahkan jabatan_id ke dalam data yang akan disimpan
+        $validatedData['jabatan_id'] = $jabatanId;
+
+        // Simpan data absensi ke dalam database
         Absensi::create($validatedData);
 
+        // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('absensi.index')->with('success', 'Data absensi berhasil disimpan.');
     }
+
 
 
     public function insertKeluar(Request $request)

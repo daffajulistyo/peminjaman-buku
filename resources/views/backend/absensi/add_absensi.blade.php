@@ -93,7 +93,7 @@
 
     let userLatitude;
     let userLongitude;
-    let maxDistance = 100;
+    let maxDistance = 1;
 
     let entry1Latitude;
     let entry1Longitude;
@@ -103,45 +103,34 @@
     const today = new Date().getDay();
     console.log("Hari saat ini : " + today);
 
-    if (today === 1) {
-        // Jika hari Senin, kita akan menggunakan dua titik koordinat
-        // Koordinat pertama
-        entry1Latitude = 0.14045929167693957;
-        entry1Longitude = 100.16687831565406;
 
-        // Ambil koordinat kedua dari endpoint
-        fetch("/user-coordinates", {
-                method: "GET",
-                headers: {
-                    Accept: "application/json",
-                },
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                userLatitude = parseFloat(data.latitude);
-                userLongitude = parseFloat(data.longitude);
+    fetch("/user-coordinates", {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+            },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.koordinat && Array.isArray(data.koordinat)) {
+                // Menyimpan semua koordinat dalam array userCoordinates
+                const userCoordinates = data.koordinat.map(coord => ({
+                    latitude: parseFloat(coord.latitude),
+                    longitude: parseFloat(coord.longitude),
+                    radius: parseFloat(coord.radius)
+                }));
 
+                // Simpan koordinat di variabel global untuk digunakan di fungsi checkDistanceAndSetButtons
+                window.userCoordinates = userCoordinates;
+
+                // Panggil fungsi checkDistanceAndSetButtons
                 checkDistanceAndSetButtons();
-            })
-            .catch((error) => console.error("Error:", error));
+            } else {
+                console.error("No coordinates found");
+            }
+        })
+        .catch((error) => console.error("Error:", error));
 
-        maxDistance = 100;
-    } else {
-        fetch("/user-coordinates", {
-                method: "GET",
-                headers: {
-                    Accept: "application/json",
-                },
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                userLatitude = parseFloat(data.latitude);
-                userLongitude = parseFloat(data.longitude);
-
-                checkDistanceAndSetButtons();
-            })
-            .catch((error) => console.error("Error:", error));
-    }
 
     // Ambil koordinat absen keluar dari endpoint
     fetch("/user-coordinates", {
@@ -152,13 +141,24 @@
         })
         .then((response) => response.json())
         .then((data) => {
-            exitLatitude = parseFloat(data.latitude);
-            exitLongitude = parseFloat(data.longitude);
+            if (data.koordinat && Array.isArray(data.koordinat)) {
+                // Menyimpan semua koordinat dalam array userCoordinates
+                const userCoordinates = data.koordinat.map(coord => ({
+                    latitude: parseFloat(coord.latitude),
+                    longitude: parseFloat(coord.longitude),
+                    radius: parseFloat(coord.radius)
+                }));
 
-            handleAbsenKeluarClick();
+                // Simpan koordinat di variabel global untuk digunakan di fungsi checkDistanceAndSetButtons
+                window.userCoordinates = userCoordinates;
+
+                // Panggil fungsi checkDistanceAndSetButtons
+                handleAbsenKeluarClick();
+            } else {
+                console.error("No coordinates found");
+            }
         })
         .catch((error) => console.error("Error:", error));
-
     // Fungsi untuk menentukan jarak dan mengatur tombol
     function checkDistanceAndSetButtons() {
         navigator.geolocation.getCurrentPosition(
@@ -166,87 +166,102 @@
                 const userLat = position.coords.latitude;
                 const userLng = position.coords.longitude;
 
-                let distanceToEntry1 = 0;
-                let distanceToEntry2 = 0;
+                // Ambil tanggal hari ini
+                const today = new Date().getDay();
 
-                // Jika hari ini Senin, hitung jarak ke kedua titik masuk
-                if (today === 1) {
-                    distanceToEntry1 = geolib.getDistance({
+                let isWithinAnyDistance = false;
+
+                const mondaySpecialCoordinates = {
+                    latitude: 0.1405111391276412,
+                    longitude: 100.16706773994271,
+                    radius: 60 // Misalkan radius 25 meter untuk koordinat spesifik ini
+                };
+
+                const fridaySpecialCoordinates = {
+                    latitude: 0.13879060059364723,
+                    longitude: 100.16557101994853,
+                    radius: 60 // Misalkan radius 25 meter untuk koordinat spesifik ini
+                };
+
+                if (today === 1) { // Jika hari ini adalah Senin
+                    const distanceToMondaySpecial = geolib.getDistance({
                         latitude: userLat,
                         longitude: userLng
                     }, {
-                        latitude: userLatitude,
-                        longitude: userLongitude
+                        latitude: mondaySpecialCoordinates.latitude,
+                        longitude: mondaySpecialCoordinates.longitude
                     });
 
-                    distanceToEntry2 = geolib.getDistance({
-                        latitude: userLat,
-                        longitude: userLng
-                    }, {
-                        latitude: entry1Latitude,
-                        longitude: entry1Longitude
-                    });
-                } else {
-                    // Jika bukan Senin, hitung jarak ke titik masuk pertama saja
-                    distanceToEntry1 = geolib.getDistance({
-                        latitude: userLat,
-                        longitude: userLng
-                    }, {
-                        latitude: userLatitude,
-                        longitude: userLongitude
-                    });
+                    console.log(
+                        `Jarak Anda ke titik koordinat spesifik (100, 200) adalah ${distanceToMondaySpecial} meter`
+                    );
+
+                    if (distanceToMondaySpecial <= mondaySpecialCoordinates.radius) {
+                        isWithinAnyDistance = true;
+                    }
                 }
 
-                console.log(
-                    "Jarak Anda Ke titik Absen Masuk 1 : " + distanceToEntry1,
-                    "Meter"
-                );
-                console.log(
-                    "Jarak Anda Ke titik Absen Masuk 2 : " + distanceToEntry2,
-                    "Meter"
-                );
+                if (today === 5) { // Jika hari ini adalah Jumat
+                    const distanceToFridaySpecial = geolib.getDistance({
+                        latitude: userLat,
+                        longitude: userLng
+                    }, {
+                        latitude: fridaySpecialCoordinates.latitude,
+                        longitude: fridaySpecialCoordinates.longitude
+                    });
 
-                const absenMasukButton =
-                    document.getElementById("absenMasukButton");
+                    console.log(
+                        `Jarak Anda ke titik koordinat spesifik (199, 999) adalah ${distanceToFridaySpecial} meter`
+                    );
 
-                // Jika hari ini Senin, tombol Absen Masuk akan aktif jika berada dalam jarak ke salah satu dari kedua titik masuk
-                if (
-                    today === 1 &&
-                    (distanceToEntry1 <= maxDistance ||
-                        distanceToEntry2 <= maxDistance)
-                ) {
+                    if (distanceToFridaySpecial <= fridaySpecialCoordinates.radius) {
+                        isWithinAnyDistance = true;
+                    }
+                }
+
+                window.userCoordinates.forEach(coord => {
+                    const distance = geolib.getDistance({
+                        latitude: userLat,
+                        longitude: userLng
+                    }, {
+                        latitude: coord.latitude,
+                        longitude: coord.longitude
+                    });
+
+                    console.log(
+                        `Jarak Anda ke titik dengan koordinat (${coord.latitude}, ${coord.longitude}) adalah ${distance} meter`
+                    );
+
+                    // Jika jarak ke salah satu titik kurang dari atau sama dengan radius, set isWithinAnyDistance menjadi true
+                    if (distance <= coord.radius) {
+                        isWithinAnyDistance = true;
+                    }
+                });
+
+                const absenMasukButton = document.getElementById("absenMasukButton");
+
+                // Jika hari ini Senin atau tidak, tombol Absen Masuk akan aktif jika berada dalam radius dari salah satu koordinat
+                if (isWithinAnyDistance) {
                     absenMasukButton.disabled = false;
                     absenMasukButton.textContent = "Datang";
-
-                    // Tandai bahwa "Absen Masuk" telah diklik
-                    absenMasukClicked = true;
-                } else if (today !== 1 && distanceToEntry1 <= maxDistance) {
-                    // Jika bukan Senin, tombol Absen Masuk akan aktif jika berada dalam jarak ke titik masuk pertama saja
-                    absenMasukButton.disabled = false;
-                    absenMasukButton.textContent = "Datang";
-
-                    // Tandai bahwa "Absen Masuk" telah diklik
-                    absenMasukClicked = true;
                 } else {
                     absenMasukButton.disabled = true;
                     absenMasukButton.textContent = "Jarak Anda > 25 M";
                 }
 
-                console.log("Jarak:", distanceToEntry1, distanceToEntry2); // Cetak nilai jarak untuk debug
+                console.log("Is within any distance:", isWithinAnyDistance); // Cetak nilai untuk debug
             },
             function(error) {
                 // Tangani kesalahan ketika lokasi tidak dapat dideteksi
                 console.error("Gagal mendeteksi lokasi:", error);
 
                 // Aktifkan tombol "Absen Masuk" dan atur teksnya menjadi "Lokasi Tidak Dapat Dideteksi"
-                const absenMasukButton =
-                    document.getElementById("absenMasukButton");
+                const absenMasukButton = document.getElementById("absenMasukButton");
                 absenMasukButton.disabled = true;
                 absenMasukButton.textContent = "Lokasi Tidak Dapat Dideteksi";
 
                 // Aktifkan tombol "Absen Keluar" dan atur teksnya menjadi "Lokasi Tidak Dapat Dideteksi"
-                const absenKeluarButton =
-                    document.getElementById("absenKeluarButton");
+                const absenKeluarButton = document.getElementById("absenKeluarButton");
                 absenKeluarButton.disabled = true;
                 absenKeluarButton.textContent = "Lokasi Tidak Dapat Dideteksi";
             }
@@ -259,48 +274,46 @@
                 const userLat = position.coords.latitude;
                 const userLng = position.coords.longitude;
 
-                const distanceToExit = geolib.getDistance({
-                    latitude: userLat,
-                    longitude: userLng
-                }, {
-                    latitude: exitLatitude,
-                    longitude: exitLongitude
+                let isWithinAnyDistance = false;
+
+                window.userCoordinates.forEach(coord => {
+                    const distance = geolib.getDistance({
+                        latitude: userLat,
+                        longitude: userLng
+                    }, {
+                        latitude: coord.latitude,
+                        longitude: coord.longitude
+                    });
+
+                    console.log(
+                        `Jarak Anda ke titik dengan koordinat (${coord.latitude}, ${coord.longitude}) adalah ${distance} meter`
+                    );
+
+                    // Jika jarak ke salah satu titik kurang dari atau sama dengan radius, set isWithinAnyDistance menjadi true
+                    if (distance <= coord.radius) {
+                        isWithinAnyDistance = true;
+                    }
                 });
 
-                console.log(
-                    "Jarak Anda Ke titik Absen Keluar : " + distanceToExit,
-                    "Meter"
-                );
+                const absenKeluarButton = document.getElementById("absenKeluarButton");
 
-                const absenKeluarButton =
-                    document.getElementById("absenKeluarButton");
-                // Hanya aktifkan tombol "Absen Keluar" jika "Absen Masuk" telah diklik
-                if (distanceToExit <= maxDistance) {
-                    if ($attendance) {
-                        absenKeluarButton.disabled = false;
-                        absenKeluarButton.textContent = "Pulang";
-
-
-                    } else {
-
-                        absenKeluarButton.disabled = false;
-                        absenKeluarButton.textContent = "Pulang";
-                    }
-
+                // Hanya aktifkan tombol "Absen Keluar" jika berada dalam radius dari salah satu koordinat
+                if (isWithinAnyDistance) {
+                    absenKeluarButton.disabled = false;
+                    absenKeluarButton.textContent = "Pulang";
                 } else {
                     absenKeluarButton.disabled = true;
                     absenKeluarButton.textContent = "Jarak Anda > 25 M";
                 }
 
-                console.log("Jarak:", distanceToExit); // Cetak nilai jarak untuk debug
+                console.log("Is within any distance:", isWithinAnyDistance); // Cetak nilai untuk debug
             },
             function(error) {
                 // Tangani kesalahan ketika lokasi tidak dapat dideteksi
                 console.error("Gagal mendeteksi lokasi:", error);
 
                 // Aktifkan tombol "Absen Keluar" dan atur teksnya menjadi "Lokasi Tidak Dapat Dideteksi"
-                const absenKeluarButton =
-                    document.getElementById("absenKeluarButton");
+                const absenKeluarButton = document.getElementById("absenKeluarButton");
                 absenKeluarButton.disabled = true;
                 absenKeluarButton.textContent = "Lokasi Tidak Dapat Dideteksi";
             }

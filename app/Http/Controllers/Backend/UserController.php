@@ -75,6 +75,7 @@ class UserController extends \App\Http\Controllers\Controller
             'opd_id' => 'nullable',
             'jabatan_id' => 'nullable',
             'pangkat_id' => 'nullable',
+            'jk' => 'required',
         ], [
             'password.min' => 'Panjang password minimal harus 8 karakter.',
             'nip.unique' => 'NIP sudah ada dalam database. Harap masukkan NIP yang berbeda.',
@@ -93,6 +94,7 @@ class UserController extends \App\Http\Controllers\Controller
         $user->opd_id = $validatedData['opd_id'];
         $user->jabatan_id = $validatedData['jabatan_id'];
         $user->pangkat_id = $validatedData['pangkat_id'];
+        $user->jk = $validatedData['jk'];
 
         try {
             $user->save();
@@ -125,6 +127,7 @@ class UserController extends \App\Http\Controllers\Controller
             'akses' => 'required',
             'eselon_id' => 'nullable',
             'is_manual' => 'nullable',
+            'jk' => 'nullable',
         ]);
 
         $user->name = $validatedData['name'];
@@ -138,6 +141,7 @@ class UserController extends \App\Http\Controllers\Controller
         $user->pangkat_id = $validatedData['pangkat_id'];
         $user->akses = $validatedData['akses'];
         $user->is_manual = $validatedData['is_manual'];
+        $user->jk = $validatedData['jk'];
 
         // Check if OPD has changed
         if ($user->isDirty('opd_id')) {
@@ -165,17 +169,13 @@ class UserController extends \App\Http\Controllers\Controller
 
     public function destroy($id)
     {
-        $user = User::find($id);
-
-        if (!$user) {
-            return redirect()->route('user.index')->with('error', 'Anggota tidak ditemukan!');
-        }
 
         try {
+            $user = User::find($id);
             $user->delete();
             return redirect()->route('user.index')->with('success', 'Anggota berhasil dihapus!');
         } catch (\Exception $e) {
-            return redirect()->route('user.index')->with('error', 'Gagal menghapus anggota. Silakan coba lagi.');
+            return redirect()->route('user.index')->with('error', 'Gagal menghapus anggota');
         }
     }
 

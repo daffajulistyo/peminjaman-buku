@@ -266,6 +266,9 @@
                                             <option value="Kontrak"
                                                 {{ old('status', $user->status) == 'Kontrak' ? 'selected' : '' }}>
                                                 Kontrak</option>
+                                            <option value="Suspend"
+                                                {{ old('status', $user->status) == 'Suspend' ? 'selected' : '' }}>
+                                                Suspend</option>
                                         </select>
 
                                         @error('status')
@@ -305,9 +308,24 @@
 
                                 </div>
 
+
                             </div>
 
-                            <!-- Continue with other form fields for the right column -->
+                            <div class="form-group col">
+                                <label for="exampleInputEmail1">Jenis Kelamin</label>
+                                <select class="form-control @error('jk') is-invalid @enderror"
+                                    id="exampleFormControlSelect1" name="jk" required>
+                                    <option value="Lk" {{ old('jk', $user->jk) == 'Lk' ? 'selected' : '' }}>
+                                        Laki Laki</option>
+                                    <option value="Pr" {{ old('jk', $user->jk) == 'Pr' ? 'selected' : '' }}>
+                                        Perempuan</option>
+                                </select>
+                                @error('jk')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
                         </div>
 
 

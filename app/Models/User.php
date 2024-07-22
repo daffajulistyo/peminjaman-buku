@@ -31,6 +31,7 @@ class User extends Authenticatable
         'nip',
         'status',
         'nohp',
+        'jk',
         'opd_id',
         'bidang_id',
         'jabatan_id',

@@ -29,7 +29,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('v1')->group(function () {
     Route::middleware('auth:api')->get('/absensi', [AbsensiApiController::class, 'index']);
-    Route::middleware('auth:api')->get('/absensi/name', [AbsensiApiController::class, 'findName']);
+    Route::get('/absensi/name', [AbsensiApiController::class, 'findName']);
+    Route::middleware('auth:api')->get('/absensi/riwayat', [AbsensiApiController::class, 'riwayatPresensi']);
 
     // Mendapatkan semau data absen sesuai dengan namanya
     Route::middleware('auth:api')->get('/absensi/report', [AbsensiApiController::class, 'report']);
@@ -49,6 +50,8 @@ Route::middleware('auth:api')->post('cuti', [CutiApiController::class, 'simpanCu
 // Lokasi
 Route::middleware('auth:api')->get('/user/details', [AuthApiController::class, 'getUserDetails']);
 Route::middleware('auth:api')->get('/user/multi', [AuthApiController::class, 'getUserMultiDetails']);
+Route::middleware('auth:api')->get('/user-coordinates', [AuthApiController::class, 'getUserCoordinates']);
+
 
 Route::middleware('auth:api')->get('/cuti/user', [CutiApiController::class, 'index']);
 Route::middleware('auth:api')->get('/dinas/user', [DinasApiController::class, 'index']);

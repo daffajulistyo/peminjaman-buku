@@ -31,12 +31,20 @@
     <link rel="stylesheet" href="{{ asset('backend/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/dist/css/adminlte.min.css') }}">
     <style>
+        .btn.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+
+    <style>
         .rangkasurat {
             width: 100%;
-            margin: 0 auto;
-            /* background-color: #fff; */
-            padding: 20px;
+            box-sizing: border-box;
         }
+
+
 
         .overlay-image {
             position: absolute;
@@ -207,7 +215,7 @@
         <!-- REQUIRED SCRIPTS -->
         <!-- jQuery -->
         <script src="{{ asset('backend/plugins/jquery/jquery.min.js') }}"></script>
-   
+
         <script src="{{ asset('backend/plugins/select2/js/select2.full.min.js') }}"></script>
         <!-- Bootstrap 4 -->
         <script src="{{ asset('backend/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>

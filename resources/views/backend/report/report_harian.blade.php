@@ -33,15 +33,13 @@
                         <div class="form-group row ml-3">
                             <label for="start_date" class="col-sm-2 col-form-label">Tanggal Awal</label>
                             <div class="col-sm-10">
-                                <input class="form-control" type="date" name="start_date" value="{{ $startDate }}"
-                                    required>
+                                <input class="form-control" type="date" name="start_date" id="start_date" required>
                             </div>
                         </div>
                         <div class="form-group row ml-3">
                             <label for="end_date" class="col-sm-2 col-form-label">Tanggal Akhir</label>
                             <div class="col-sm-10">
-                                <input class="form-control" type="date" name="end_date" value="{{ $endDate }}"
-                                    required>
+                                <input class="form-control" type="date" name="end_date" id="end_date" required>
                             </div>
                         </div>
 
@@ -141,6 +139,8 @@
                                                     class="rata-tengah">Hari /
                                                     Tanggal
                                                 </th>
+                                                <th rowspan="4" class="rata-tengah">Total Jam</th>
+                                                <th rowspan="4" class="rata-tengah">Rata-Rata</th>
                                             </tr>
 
 
@@ -182,13 +182,16 @@
 
                                             @foreach ($users as $user)
                                                 @if ($user->role == 2)
+                                                    @php
+                                                        $userTotalDurasiDetik = 0;
+                                                        $userDaysCount = 0;
+                                                    @endphp
                                                     <tr
                                                         style="background-color: {{ $user->status === 'PNS' || $user->status === 'PPPK' ? '#f4f4f9' : '#FFFFFF' }};">
-
                                                         <td class="rata-tengah" style="font-size: 14px;">
                                                             {{ $i++ }}</td>
-                                                        <td class="name-nowrap" style="font-size: 14px;">
-                                                            {{ $user->name }}</td>
+                                                        <td class="name-nowrap">{{ $user->name }}</td>
+
                                                         @foreach ($attendanceData[$user->id] as $key => $attendance)
                                                             @if ($attendance['jam_masuk'] == 'Libur Nasional')
                                                                 <td colspan="3" class="rata-tengah">Libur Nasional</td>
@@ -200,18 +203,31 @@
                                                                 $hasLeave = isset($leaveData[$user->id][$key]) && $leaveData[$user->id][$key] == 'Cuti';
                                                                 $hasAttendance = $attendance['jam_masuk'] !== '-' && $attendance['jam_keluar'] !== '-';
                                                                 $hasTugas = isset($tbData[$user->id][$key]) && $tbData[$user->id][$key] == 'TB';
-
-                                                                $isEselonII = $user->eselon && ($user->eselon->name === 'Ajudan' || $user->eselon->name === 'Eselon II A' || $user->eselon->name === 'Eselon II B');
                                                                 $isManual = $user->is_manual == 1;
-                                                                // Hitung jam kerja jika ada kedatangan dan kepergian
+                                                                $isEselonII = $user->eselon && ($user->eselon->name === 'Ajudan' || $user->eselon->name === 'Eselon II A' || $user->eselon->name === 'Eselon II B');
                                                                 $jam_masuk = $attendance['jam_masuk'];
-                                                                $jam_keluar = $attendance['jam_keluar'] ?? '-'; 
+                                                                $jam_keluar = $attendance['jam_keluar'] ?? '-';
                                                                 $durasi_kerja = '-';
-                                                                if ($jam_masuk !== '-' && $jam_keluar !== '-') {
+
+                                                                if ($hasDuty) {
+                                                                    // Jika dinas, tambahkan 8 jam 30 menit (30600 detik)
+                                                                    $durasi_detik = 30600;
+                                                                    $userTotalDurasiDetik += $durasi_detik;
+                                                                    $durasi_kerja = '8 Jam 30 Menit';
+                                                                    $userDaysCount++;
+                                                                } elseif ($hasLeave) {
+                                                                    // Jika cuti, tambahkan 5 jam (18000 detik)
+                                                                    $durasi_detik = 18000;
+                                                                    $userTotalDurasiDetik += $durasi_detik;
+                                                                    $durasi_kerja = '5 Jam';
+                                                                    $userDaysCount++;
+                                                                } elseif ($jam_masuk !== '-' && $jam_keluar !== '-') {
                                                                     $durasi_detik = strtotime($jam_keluar) - strtotime($jam_masuk) - 3600; // Kurangkan 1 jam
                                                                     if ($durasi_detik < 0) {
                                                                         $durasi_detik = 0; // Pastikan tidak negatif
                                                                     }
+                                                                    $userTotalDurasiDetik += $durasi_detik; // Tambahkan ke total durasi pengguna
+                                                                    $userDaysCount++; // Tambahkan hitungan hari
                                                                     $jam = floor($durasi_detik / 3600);
                                                                     $menit = floor(($durasi_detik % 3600) / 60);
                                                                     $durasi_kerja = $jam . ' Jam ' . $menit . ' Menit';
@@ -220,16 +236,14 @@
 
                                                                 @if ($hasAttendance)
                                                                     <td class="rata-tengah"
-                                                                        style="font-size: 12px; font-style: italic; font-weight:600">
+                                                                        style="font-size: 12px; font-weight: bold; font-style:italic;">
                                                                         {{ $attendance['jam_masuk'] }}</td>
-
-
                                                                     <td class="rata-tengah"
-                                                                        style="font-size: 12px; font-style: italic; font-weight:600">
+                                                                        style="font-size: 12px; font-weight: bold; font-style:italic">
                                                                         {{ $attendance['jam_keluar'] ?? '-' }}</td>
                                                                     <td class="rata-tengah"
-                                                                        style="font-size: 12px; font-style: italic; font-weight:600">
-                                                                        -</td>
+                                                                        style="font-size: 12px; font-weight: bold; font-style:italic">
+                                                                        {{ $durasi_kerja }}</td>
                                                                 @else
                                                                     @if (!$hasDuty && !$hasPermission && !$hasSick && !$hasLeave && !$hasTugas)
                                                                         @if ($isEselonII)
@@ -278,6 +292,25 @@
                                                                 @endif
                                                             @endif
                                                         @endforeach
+
+                                                        <?php
+                                                        // Menghitung total jam dan menit dari total durasi dalam detik
+                                                        $userTotalJam = floor($userTotalDurasiDetik / 3600);
+                                                        $userTotalMenit = floor(($userTotalDurasiDetik % 3600) / 60);
+                                                        // Menghitung rata-rata jam kerja per hari
+                                                        $userAverageJamPerDay = count($dates) > 0 ? floor($userTotalDurasiDetik / count($dates) / 3600) : 0;
+                                                        $userAverageMenitPerDay = count($dates) > 0 ? floor((($userTotalDurasiDetik / count($dates)) % 3600) / 60) : 0;
+                                                        ?>
+
+                                                        @php
+                                                            $starTd = '<td class="rata-tengah">★</td>';
+                                                            $timeTd =
+                                                                '<td class="name-nowrap" style="font-size: 12px; font-weight: bold; font-style:italic;">';
+                                                        @endphp
+
+                                                        {!! $isEselonII ? $starTd : $timeTd . "{$userTotalJam} Jam {$userTotalMenit} Menit</td>" !!}
+
+                                                        {!! $isEselonII ? $starTd : $timeTd . "{$userAverageJamPerDay} Jam {$userAverageMenitPerDay} Menit</td>" !!}
                                                     </tr>
                                                 @endif
                                             @endforeach
@@ -438,5 +471,38 @@
                 document.body.innerHTML = originalContents;
             });
         </script>
+
     @endif
+    <script>
+        // Menambahkan event listener untuk memvalidasi tanggal
+        document.getElementById('start_date').addEventListener('change', function() {
+            var startDate = new Date(this.value);
+            var endDateField = document.getElementById('end_date');
+            var endDate = new Date(endDateField.value);
+
+            // Mengatur tanggal minimal di end_date
+            var maxEndDate = new Date(startDate);
+            maxEndDate.setDate(startDate.getDate() + 5); // Maksimal 5 hari setelah tanggal awal
+
+            if (endDate > maxEndDate) {
+                endDateField.value = ''; // Mengosongkan nilai jika tidak valid
+                alert('Jarak antara tanggal awal dan akhir maksimal 5 hari.');
+            }
+        });
+
+        document.getElementById('end_date').addEventListener('change', function() {
+            var startDateField = document.getElementById('start_date');
+            var startDate = new Date(startDateField.value);
+            var endDate = new Date(this.value);
+
+            // Memvalidasi tanggal akhir
+            var maxEndDate = new Date(startDate);
+            maxEndDate.setDate(startDate.getDate() + 5); // Maksimal 5 hari setelah tanggal awal
+
+            if (endDate > maxEndDate) {
+                alert('Jarak antara tanggal awal dan akhir maksimal 5 hari.');
+                this.value = ''; // Mengosongkan nilai jika tidak valid
+            }
+        });
+    </script>
 @endsection

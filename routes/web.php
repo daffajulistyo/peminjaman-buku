@@ -217,7 +217,6 @@ Route::get('/report/admin/name', [ReportController::class, 'cetakLaporanByAdmin'
 
 Route::post('/select-opd', [DinasController::class, 'selectOpd'])->name('select-opd');
 Route::post('/filter-data', [ReportController::class, 'filterLaporan'])->name('filter-laporan');
-Route::get('/user-coordinates', [AuthApiController::class, 'getUserCoordinates'])->middleware(['auth']);
 
 Route::get('report/name', [ReportController::class, 'cetakLaporanByNama'])->name('report.nama')->middleware(['auth']);
 Route::get('report/opd/name', [ReportController::class, 'cetakLaporanByOpdNama'])->name('report.opd.nama')->middleware(['auth']);

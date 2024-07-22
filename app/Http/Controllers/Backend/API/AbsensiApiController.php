@@ -8,8 +8,8 @@ use App\Models\AktifKoordinat;
 use App\Models\Izin;
 use App\Models\Dinas;
 use App\Models\Cuti;
-use App\Models\User;
 use App\Models\Sakit;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -36,10 +36,56 @@ class AbsensiApiController extends Controller
         // Mencari data berdasarkan ID pengguna dan membatasi hasilnya menjadi 10 berdasarkan tanggal
         $absensi = Absensi::where('user_id', $userId)
             ->orderBy('tanggal', 'desc') // Menampilkan data terbaru dulu
-            ->limit(2)
+            ->limit(3)
             ->get();
 
         return response()->json(['data' => $absensi]);
+    }
+
+    public function riwayatPresensi(Request $request)
+    {
+        $userId = $request->input('user_id');
+
+        // Mencari data absensi berdasarkan ID pengguna dan membatasi hasilnya menjadi 2 berdasarkan tanggal
+        $absensi = Absensi::where('user_id', $userId)
+            ->orderBy('tanggal', 'desc') // Menampilkan data terbaru dulu
+            ->limit(2)
+            ->get();
+
+        // Mencari data sakit berdasarkan ID pengguna dan membatasi hasilnya menjadi 2 berdasarkan tanggal
+        $sakit = Sakit::where('user_id', $userId)
+            ->orderBy('tanggal', 'desc')
+            ->limit(2)
+            ->get();
+
+        // Mencari data dinas berdasarkan ID pengguna dan membatasi hasilnya menjadi 2 berdasarkan tanggal
+        $dinas = Dinas::where('user_id', $userId)
+            ->orderBy('tanggal', 'desc')
+            ->limit(2)
+            ->get();
+
+        // Mencari data cuti berdasarkan ID pengguna dan membatasi hasilnya menjadi 2 berdasarkan tanggal_mulai
+        $cuti = Cuti::where('user_id', $userId)
+            ->orderBy('tanggal_mulai', 'desc')
+            ->limit(2)
+            ->get();
+
+        // Mencari data izin berdasarkan ID pengguna dan membatasi hasilnya menjadi 2 berdasarkan tanggal
+        $izin = Izin::where('user_id', $userId)
+            ->orderBy('tanggal', 'desc')
+            ->limit(2)
+            ->get();
+
+        // Menggabungkan semua data
+        $data = [
+            'absensi' => $absensi,
+            'sakit' => $sakit,
+            'dinas' => $dinas,
+            'cuti' => $cuti,
+            'izin' => $izin,
+        ];
+
+        return response()->json(['data' => $data]);
     }
 
     public function report(Request $request)
@@ -108,6 +154,16 @@ class AbsensiApiController extends Controller
 
         $pegawai = User::find($user);
 
+        if ($pegawai->status == 'Suspend') {
+            return response()->json(
+                [
+
+                    'error_type' =>'suspend',
+                    'message' => 'Anda tidak diizinkan melakukan presensi karena status Anda ditangguhkan.',
+                ],
+                403
+            );
+        }
         // Jika belum ada izin atau absen masuk untuk pengguna pada tanggal yang sama, simpan absen masuk
         $jamMasuk = Carbon::now('Asia/Jakarta');
         $absensi = new Absensi([
@@ -117,8 +173,6 @@ class AbsensiApiController extends Controller
             'tanggal' => $tanggal,
             'jam_masuk' => $jamMasuk->toTimeString(),
         ]);
-        // Jika belum ada izin atau absen masuk untuk pengguna pada tanggal yang sama, simpan absen masuk
-
         $absensi->save();
 
         return response()->json(['message' => 'Absensi berhasil disimpan']);
@@ -153,7 +207,7 @@ class AbsensiApiController extends Controller
                     $absenMasuk->jam_keluar = $jamKeluar;
                     $absenMasuk->save();
 
-                    return response()->json(['message' => 'Absen keluar baru Piket berhasil disimpan']);
+                    return response()->json(['message' => 'Absen keluar berhasil disimpan']);
                 }
             } else {
                 return response()->json(['error_type' => 'no_absen_masuk', 'message' => 'Silahkan lakukan absensi masuk piket terlebih dahulu'], 400);
@@ -174,7 +228,6 @@ class AbsensiApiController extends Controller
             }
         }
     }
-
 
     public function koordinatTambahan(Request $request)
     {

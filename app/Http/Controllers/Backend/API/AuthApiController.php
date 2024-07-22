@@ -211,23 +211,32 @@ class AuthApiController extends Controller
         }
     }
 
-
     public function getUserCoordinates(Request $request)
     {
+        // $user = $request->user();
         $user = Auth::user();
 
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
         if ($user->opd && $user->opd->koordinats->isNotEmpty()) {
-            $latitude = $user->opd->koordinats[0]->latitude;
-            $longitude = $user->opd->koordinats[0]->longitude;
+            $coordinates = $user->opd->koordinats->map(function ($koordinat) {
+                return [
+                    'latitude' => $koordinat->latitude,
+                    'longitude' => $koordinat->longitude,
+                    'radius' => $koordinat->radius,
+                ];
+            });
 
             return response()->json([
                 'name' => $user->name,
                 'opd' => $user->opd->name,
-                'latitude' => $latitude,
-                'longitude' => $longitude,
+                'koordinat' => $coordinates,
             ]);
         } else {
             return response()->json(['message' => 'Koordinat tidak ditemukan'], 404);
         }
     }
+
 }

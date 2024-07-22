@@ -165,6 +165,7 @@
                                         <option value="PPPK">PPPK</option>
                                         <option value="Honor Daerah">Honor Daerah</option>
                                         <option value="Kontrak">Kontrak</option>
+                                        <option value="Suspend">Suspend</option>
                                     </select>
                                     @error('status')
                                         <span class="invalid-feedback" role="alert">
@@ -172,6 +173,19 @@
                                         </span>
                                     @enderror
                                 </div>
+                            </div>
+                            <div class="form-group col">
+                                <label for="exampleInputEmail1">Jenis Kelamin</label>
+                                <select class="form-control @error('jk') is-invalid @enderror"
+                                    id="exampleFormControlSelect1" name="jk" required>
+                                    <option value="Lk">Laki Laki</option>
+                                    <option value="Pr">Perempuan</option>
+                                </select>
+                                @error('jk')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
                         </div>
                     </div>
