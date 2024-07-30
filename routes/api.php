@@ -11,6 +11,7 @@ use App\Http\Controllers\Backend\API\SakitApiController;
 use App\Http\Controllers\Backend\API\ReportApiController;
 use App\Http\Controllers\Backend\API\AbsensiApiController;
 use App\Http\Controllers\Backend\Api\LaporanApiController;
+use App\Http\Controllers\Backend\API\ShiftApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,3 +69,6 @@ Route::get('/koordinat-tambahan', [AbsensiApiController::class, 'koordinatTambah
 Route::get('/users/opd', [ReportApiController::class, 'getUsersCountByOpd']);
 Route::get('/rekap/laporan', [ReportApiController::class, 'rekapLaporan']);
 Route::get('/kehadiran', [ChartApiController::class, 'getTotalKehadiranPerOpd']);
+
+// get shift
+Route::get('/shift', [ShiftApiController::class, 'index']);

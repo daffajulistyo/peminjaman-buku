@@ -130,6 +130,8 @@
                                 </p>
                             </a>
                         </li>
+
+
                     @endif
 
 
@@ -229,6 +231,17 @@
                                 </li>
                             </ul>
                         </li>
+                        <li
+                            class="nav-item {{ $activeRoute == 'shift.index' || $activeRoute == 'shift.show' ? 'menu-open' : '' }}">
+                            <a href="{{ route('shift.index') }}"
+                                class="nav-link {{ $activeRoute == 'shift.index' || $activeRoute == 'shift.show' ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-clock"></i>
+                                <p>
+                                    Shift
+                                    <!-- <span class="right badge badge-danger">New</span> -->
+                                </p>
+                            </a>
+                        </li>
                         <li class="nav-item {{ $activeRoute == 'faqs.index' ? 'menu-open' : '' }}">
                             <a href="{{ route('faqs.index') }}"
                                 class="nav-link {{ $activeRoute == 'faqs.index' ? 'active' : '' }}">
@@ -238,6 +251,7 @@
                                 </p>
                             </a>
                         </li>
+
                     @endif
 
 

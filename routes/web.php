@@ -21,6 +21,7 @@ use App\Http\Controllers\Backend\KoordinatController;
 use App\Http\Controllers\Backend\API\AuthApiController;
 use App\Http\Controllers\Backend\LiburNasionalController;
 use App\Http\Controllers\Backend\RekapitulasiController;
+use App\Http\Controllers\Backend\ShiftController;
 use App\Http\Controllers\Backend\TugasBelajarController;
 
 /*
@@ -125,6 +126,15 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::post('/simpan-izin', [IzinController::class, 'simpanIzin'])->name('simpan-izin');
         Route::post('/simpan-sakit', [SakitController::class, 'simpanSakit'])->name('simpan-sakit');
         Route::post('/simpan-absen', [AbsensiController::class, 'simpanAbsen'])->name('simpan-absen');
+    });
+
+    Route::prefix('shift')->group(function () {
+        Route::get('/', [ShiftController::class, 'index'])->name('shift.index');
+        Route::post('/insert_shift', [ShiftController::class, 'store'])->name('shift.insert');
+        Route::get('/add_shift', [ShiftController::class, 'create'])->name('shift.show');
+        Route::get('/edit_shift/{id}', [ShiftController::class, 'edit'])->name('shift.edit');
+        Route::post('/update_shift/{id}', [ShiftController::class, 'update'])->name('shift.update');
+        Route::get('/delete_shift/{id}', [ShiftController::class, 'destroy'])->name('shift.delete');
     });
 
     Route::prefix('koordinat')->group(function () {
